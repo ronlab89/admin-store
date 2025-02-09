@@ -4,42 +4,50 @@
 
 Este proyecto consiste en el desarrollo del frontend de un Dashboard Administrativo , específicamente diseñado para satisfacer las necesidades de pequeños negocios. La interfaz es intuitiva y funcional, brindando a los usuarios acceso a una amplia gama de herramientas clave para gestionar su operación diaria de manera eficiente.
 
-📌 Características Principales
+## 📌 Características Principales
 
-✅ **Gestión de Productos**
-Creación, edición y eliminación de productos.
-Categorización y etiquetado avanzado.
+✅ **Gestión de Productos**  
+Creación, edición y eliminación de productos.  
+Categorización y etiquetado avanzado.  
 Gestión de precios, descuentos y existencias.
-✅ **Administración de Clientes**
-Registro y actualización de datos de clientes.
-Historial de compras y preferencias.
+
+✅ **Administración de Clientes**  
+Registro y actualización de datos de clientes.  
+Historial de compras y preferencias.  
 Segmentación de clientes para campañas personalizadas.
-✅ **Control Financiero**
-Monitoreo de ingresos, egresos y balances.
-Visualización de estados financieros en tiempo real.
+
+✅ **Control Financiero**  
+Monitoreo de ingresos, egresos y balances.  
+Visualización de estados financieros en tiempo real.  
 Generación de informes contables detallados.
-✅ **Gestión de Ventas**
-Supervisión del stock en tiempo real.
-Alertas automáticas para reabastecimiento.
+
+✅ **Gestión de Ventas**  
+Supervisión del stock en tiempo real.  
+Alertas automáticas para reabastecimiento.  
 Registro de entradas y salidas de productos.
-✅ **Gestión de Comercio**
-Registro de transacciones comerciales.
-Generación de recibos personalizados.
+
+✅ **Gestión de Comercio**  
+Registro de transacciones comerciales.  
+Generación de recibos personalizados.  
 Seguimiento de pedidos y entregas.
-✅ **Gestión de Empleados**
-Organización de información laboral y roles.
-Asignación de permisos y niveles de acceso.
+
+✅ **Gestión de Empleados**  
+Organización de información laboral y roles.  
+Asignación de permisos y niveles de acceso.  
 Control de horarios y productividad.
-✅ **Sesión de Usuario**
-Autenticación segura con múltiples niveles de acceso.
+
+✅ **Sesión de Usuario**  
+Autenticación segura con múltiples niveles de acceso.  
 Soporte para roles como administrador, supervisor y empleado.
-✅ **Generación de Reportes Dinámicos**
-Tablas interactivas y gráficas visuales para análisis de datos.
-Informes personalizados sobre ventas, inventario, finanzas y más.
+
+✅ **Generación de Reportes Dinámicos**  
+Tablas interactivas y gráficas visuales para análisis de datos.  
+Informes personalizados sobre ventas, inventario, finanzas y más.  
 Exportación de reportes en formatos como PDF, Excel o CSV.
-✅ **Personalización**
-Temas visuales ajustables (claro/oscuro).
-Configuración de preferencias de notificaciones.
+
+✅ **Personalización**  
+Temas visuales ajustables (claro/oscuro).  
+Configuración de preferencias de notificaciones.  
 Disposición flexible de módulos según las necesidades del negocio.
 
 ## 🛠 Tecnologías Utilizadas
