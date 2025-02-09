@@ -117,11 +117,11 @@ npm run preview / yarn preview
 
 ## 🎯 Roadmap & Mejoras Futuras
 
-🔹 Implementar autenticación con Google/Facebook.
-🔹 Gestionar descuentos en los productos.
-🔹 Añadir soporte para múltiples idiomas.
-🔹 Seguimiento de pedidos y entregas.
-🔹 Integración con servicios de notificaciones en tiempo real.
+🔹 Implementar autenticación con Google/Facebook.  
+🔹 Gestionar descuentos en los productos.  
+🔹 Añadir soporte para múltiples idiomas.  
+🔹 Seguimiento de pedidos y entregas.  
+🔹 Integración con servicios de notificaciones en tiempo real.  
 🔹 Disposición flexible de módulos según las necesidades del negocio.
 
 ## 🤝 Contribuciones
