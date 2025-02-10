@@ -1,1 +1,35 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+@theme {
+    --font-adminstore-title: Dangrek, sans-serif;
+    --font-adminstore-body: Liter, sans-serif;
+  }
+
+@font-face{
+    font-family: "Dangrek";
+    src: url("./assets/fonts/Dangrek-Regular.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+    font-display:swap;
+  }
+
+@font-face{
+    font-family: "Liter";
+    src: url("./assets/fonts/Liter-Regular.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+    font-display:swap;
+  }
+
+.pattern {
+    background-color: #f1f5f9;
+    opacity: 0.8;
+    background-image: radial-gradient(#14b8a6 0.5px, #f1f5f9 0.5px);
+    background-size: 10px 10px;
+}
+.dark .pattern {
+    background-color: #0f172a;
+    opacity: 0.6;
+    background-image: radial-gradient(#14b8a6 0.5px, #0f172a 0.5px);
+    background-size: 10px 10px;
+}
