@@ -4,10 +4,12 @@ import { persist } from "zustand/middleware";
 const initialState = {
   logged: false,
   user: {
-    id: "",
-    name: "",
-    note: "",
-    email: "",
+    id: null,
+    name: null,
+    surname: null,
+    email: null,
+    role: null,
+    events_history: {},
   },
   token: null,
 };

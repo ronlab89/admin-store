@@ -7,9 +7,22 @@ import User from "../icons/User";
 import Password from "../icons/Password";
 import { useState } from "react";
 import Loader from "@/components/Loader";
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "@/store/auth.store";
+import { useShallow } from "zustand/react/shallow";
+import { onSubmitLogin } from "../utils/authMethods";
 
 const Form = () => {
+  const { user, token, handlelogin, handleuser } = useAuthStore(
+    useShallow((state) => ({
+      user: state.user,
+      token: state.token,
+      handlelogin: state.handlelogin,
+      handleuser: state.handleuser,
+    }))
+  );
   const [loading, setLoading] = useState({});
+  const [errorLogin, setErrorLogin] = useState(null);
   const {
     register,
     handleSubmit,
@@ -25,17 +38,18 @@ const Form = () => {
   });
 
   const { required, validateTrim, minLength, patternEmail } = formValidate();
+  const navigate = useNavigate();
 
   const onLogin = (data) => {
     console.log({ data });
-    // onSubmitLogin(
-    //   data,
-    //   setLoading,
-    //   navigate,
-    //   setErrorLogin,
-    //   handlelogin,
-    //   handleuser
-    // );
+    onSubmitLogin(
+      data,
+      setLoading,
+      navigate,
+      setErrorLogin,
+      handlelogin,
+      handleuser
+    );
   };
 
   return (
@@ -58,17 +72,17 @@ const Form = () => {
             >
               <InputText
                 icon={<User width={16} height={16} styles={""} />}
-                type={"text"}
+                type={"email"}
                 text={"Usuario"}
                 placeholder={"Escribe tu correo electrónico"}
-                name={"name"}
-                id={"name"}
-                error={errors.name && "error-input"}
-                {...register("name", {
+                name={"email"}
+                id={"email"}
+                error={errors.email && "error-input"}
+                {...register("email", {
                   required,
                   validate: validateTrim,
                 })}
-                errorId={errors.name}
+                errorId={errors.email}
               />
 
               <InputText
@@ -90,6 +104,7 @@ const Form = () => {
                 icon={""}
                 type={"submit"}
                 styles={"cursor-pointer"}
+                mode={"form"}
               />
             </form>
           </div>

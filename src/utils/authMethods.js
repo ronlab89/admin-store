@@ -3,22 +3,25 @@ import { notify } from "./alertNotify";
 import { getUserList } from "./userMethods";
 
 //Info user
-const getUserLogged = async (tokenlogin, handleuser) => {
+const getUserLogged = async ({ tokenlogin, handleuser }) => {
   try {
     const res = await axios({
       method: "get",
-      url: `${import.meta.env.VITE_API_AUTH_URL}/me`,
+      url: `${import.meta.env.VITE_API_URL}/auth/user`,
       headers: { Authorization: `Bearer ${tokenlogin}` },
     });
-    // console.log("Info User: ", res);
+    console.log("Info User: ", res);
     if (res.status === 200) {
-      const data = res.data;
+      const data = res.data.userLogged;
       handleuser({
         id: data.id,
         name: data.name,
-        note: data.note,
+        surname: data.surname,
         email: data.email,
+        role: data.role,
+        events_history: data.events_history,
       });
+      refreshToken();
     }
   } catch (error) {
     console.log(error);
@@ -45,22 +48,58 @@ const onSubmitLogin = async (
     setLoading((prev) => ({ ...prev, login: true }));
     const res = await axios({
       method: "post",
-      url: `${import.meta.env.VITE_API_AUTH_URL}/login`,
+      url: `${import.meta.env.VITE_API_URL}/auth/login`,
       data: { email, password },
+      withCredentials: true,
     });
-    // console.log("Res login: ", res);
+    console.log("Res login: ", res);
     if (res.status === 200) {
       handlelogin(true, {
         token: res.data.token,
       });
-      getUserLogged(res.data.token, handleuser);
-      navigate("/inicio");
+      // getUserLogged(res.data.token, handleuser);
+      navigate("/dashboard");
     }
   } catch (error) {
     console.log(error);
     setErrorLogin(error?.response?.data);
   } finally {
     setLoading((prev) => ({ ...prev, login: false }));
+  }
+};
+
+const setTime = () => {
+  setTimeout(() => {
+    refreshToken();
+  }, 840000);
+};
+
+const refreshToken = async () => {
+  try {
+    const res = await axios({
+      method: "post",
+      url: `${import.meta.env.VITE_API_URL}/auth/refresh-token`,
+      withCredentials: true,
+      credential: "include",
+    });
+    console.log("Res refreshToken: ", res);
+    if (res.status === 200) {
+      const data = res.data;
+      handleuser({
+        id: data.id,
+        name: data.name,
+        surname: data.surname,
+        email: data.email,
+        role: data.role,
+        events_history: data.events_history,
+      });
+      handlelogin(true, {
+        token: data.token,
+      });
+      setTime();
+    }
+  } catch (error) {
+    console.log(error.message);
   }
 };
 
@@ -117,43 +156,24 @@ const onSubmitRegister = async (
 };
 
 //Logout
-const logout = async (
+const logout = async ({
   navigate,
   resetAuth,
-  resetCarrier,
-  resetMarket,
   resetMenu,
-  resetOrder,
   resetToggles,
   resetUser,
-  resetBatch,
-  resetDanes,
-  resetDashboard,
-  resetDeliver,
-  resetErrors,
-  resetPackages,
-  resetProccess
-) => {
+}) => {
   try {
     const res = await axios({
       method: "post",
-      url: `${import.meta.env.VITE_API_AUTH_URL}/logout`,
+      url: `${import.meta.env.VITE_API_URL}/auth/logout`,
+      withCredentials: true,
     });
     if (res.status === 200) {
       resetAuth();
-      resetCarrier();
-      resetMarket();
       resetMenu();
-      resetOrder();
       resetToggles();
       resetUser();
-      resetBatch();
-      resetDanes();
-      resetDashboard();
-      resetDeliver();
-      resetErrors();
-      resetPackages();
-      resetProccess();
       navigate("/");
     }
   } catch (error) {

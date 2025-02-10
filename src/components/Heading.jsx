@@ -14,10 +14,10 @@ const headingStyles = {
 const Heading = forwardRef(
   ({ type = "h6", variant = "", id, extraStyles = "", children }, ref) => {
     const key = variant ? `${type}.${variant}` : type;
-    const Tag = headingStyles[key] ? type : "h6"; // Asegurar que el tipo sea válido
+    const Tag = headingStyles[key] ? type : "h6";
     const classes = `${
       headingStyles[key] || headingStyles[type]
-    } ${extraStyles}`.trim(); // Combinar estilos
+    } ${extraStyles}`.trim();
 
     return (
       <Tag ref={ref} id={id} className={classes}>

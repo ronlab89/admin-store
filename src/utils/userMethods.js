@@ -1,13 +1,13 @@
 import axios from "axios";
 import { notify } from "./alertNotify";
-import { getMarketList } from "./marketsMethods";
+// import { getMarketList } from "./marketsMethods";
 
 const getUserList = async (setLoading, user, handleUserList, setErrorAxios) => {
   try {
     setLoading((prev) => ({ ...prev, users: true }));
     const res = await axios({
       method: "get",
-      url: `${import.meta.env.VITE_API_BASE_URL}/users/list`,
+      url: `${import.meta.env.VITE_API_URL}/users/list`,
     });
     // console.log("Res user list: ", res);
     if (res.status === 200) {

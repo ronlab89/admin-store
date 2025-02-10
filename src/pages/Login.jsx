@@ -21,7 +21,7 @@ const Login = () => {
             <span className="">Admin Store</span>
           </Heading>
         </div>
-        <div className="hidden">
+        <div className="">
           <img
             src="/draw.webp"
             alt="Draw"

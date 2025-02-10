@@ -92,7 +92,7 @@ yarn dev
 ```
 
 5. **Accede a la aplicación**
-   La aplicación estara disponible en http://localhost:5173.
+   La aplicación estara disponible en http://localhost:5000/api/v1
    El puerto puede variar si se encuentra ocupado.
 
 ## 📡 Scripts Disponibles
