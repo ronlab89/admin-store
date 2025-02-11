@@ -77,6 +77,7 @@ const Form = () => {
                 placeholder={"Escribe tu correo electrónico"}
                 name={"email"}
                 id={"email"}
+                mode={"login"}
                 error={errors.email && "error-input"}
                 {...register("email", {
                   required,
@@ -92,6 +93,7 @@ const Form = () => {
                 placeholder={"Escribe la contraseña registrada"}
                 name={"password"}
                 id={"password"}
+                mode={"login"}
                 error={errors.password && "error-input"}
                 {...register("password", {
                   required,

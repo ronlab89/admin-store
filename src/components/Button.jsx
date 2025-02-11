@@ -37,7 +37,14 @@ const ButtonDashed = ({
           </span>
         </button>
       ) : (
-        <button className={`${styles}`}>{text}</button>
+        <button
+          type={type}
+          onClick={handleClick}
+          disabled={disabled}
+          className={`${styles} hover:text-teal-600 dark:hover:text-teal-400 transition-colors duration-300`}
+        >
+          {text}
+        </button>
       )}
     </>
   );

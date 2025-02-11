@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 const initialState = {
-  userList: [],
+  userList: null,
 };
 
 // Función para resetear estado

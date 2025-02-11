@@ -164,7 +164,7 @@ const DataTable = ({
               text === undefined || text === "" ? "" : "hidden"
             }`}
           >
-            <Button
+            {/* <Button
               text={"Procesar lote"}
               icon={<Batch width={15} height={15} styles={""} />}
               reverse={false}
@@ -174,7 +174,7 @@ const DataTable = ({
                 handleSubLinkId("");
               }}
               // disabled={ordersBatch.length <= 1 ? true : false}
-            />
+            /> */}
 
             {/* <Popover
               id={"popover-top"}
@@ -238,7 +238,7 @@ const DataTable = ({
             </tr>
           ))}
         </thead>
-        <tbody className="overflow-hidden rounded-b-[.5rem] z-10">
+        <tbody className="overflow-hidden rounded-b-[.5rem] z-10 text-[0.8rem]">
           {table.getRowModel().rows.map((row, indexRow) => (
             <React.Fragment key={row.id}>
               <tr

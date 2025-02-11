@@ -2,16 +2,23 @@ import axios from "axios";
 import { notify } from "./alertNotify";
 // import { getMarketList } from "./marketsMethods";
 
-const getUserList = async (setLoading, user, handleUserList, setErrorAxios) => {
+const getUserList = async ({
+  setLoading,
+  token,
+  setErrorAxios,
+  user,
+  handleUserList,
+}) => {
   try {
     setLoading((prev) => ({ ...prev, users: true }));
     const res = await axios({
       method: "get",
-      url: `${import.meta.env.VITE_API_URL}/users/list`,
+      url: `${import.meta.env.VITE_API_URL}/user/list`,
+      headers: { Authorization: `Bearer ${token}` },
     });
-    // console.log("Res user list: ", res);
+    console.log("Res user list: ", res);
     if (res.status === 200) {
-      const preusers = res.data.filter((u) => u.email !== user.email);
+      const preusers = res.data.allUsers.filter((u) => u.email !== user.email);
       handleUserList(preusers);
     }
   } catch (error) {

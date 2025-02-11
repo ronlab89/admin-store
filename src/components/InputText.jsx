@@ -22,6 +22,7 @@ const InputText = forwardRef(
       checked,
       divStyles,
       styles,
+      mode,
     },
     ref
   ) => {
@@ -69,7 +70,11 @@ const InputText = forwardRef(
             className={`${
               type === "checkbox"
                 ? "w-4 h-4 text-teal-600 bg-slate-100 border-slate-300 rounded focus:ring-teal-500 dark:focus:ring-teal-600 dark:ring-offset-slate-800 focus:ring-2 dark:bg-slate-700 dark:border-slate-600"
-                : `${styles} flex pl-12 h-9 w-full rounded-md border border-slate-100 dark:border-slate-900 border-input bg-slate-100 dark:bg-slate-900 px-3 py-1 text-xs shadow-sm font-medium text-slate-600 dark:text-slate-400 placeholder:text-slate-400 dark:placeholder:text-slate-600 placeholder:font-normal focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-600 dark:focus-visible:ring-slate-400 disabled:cursor-not-allowed disabled:opacity-50`
+                : `${styles} flex pl-12 h-9 w-full rounded-md border border-slate-100 dark:border-slate-900 border-input ${
+                    mode === "login"
+                      ? "bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400"
+                      : "bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
+                  } px-3 py-1 text-xs shadow-sm font-medium  placeholder:text-slate-400 dark:placeholder:text-slate-600 placeholder:font-normal focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-600 dark:focus-visible:ring-slate-400 disabled:cursor-not-allowed disabled:opacity-50`
             }`}
           />
         </div>

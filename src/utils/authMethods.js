@@ -10,10 +10,11 @@ const getUserLogged = async ({ tokenlogin, handleuser, handlelogin }) => {
       url: `${import.meta.env.VITE_API_URL}/auth/user`,
       headers: { Authorization: `Bearer ${tokenlogin}` },
     });
+    console.log("Res user logged: ", res);
     if (res.status === 200) {
       const data = res.data.userLogged;
       handleuser({
-        id: data.id,
+        id: data._id,
         name: data.name,
         surname: data.surname,
         email: data.email,
@@ -94,34 +95,44 @@ const refreshToken = async ({ handlelogin }) => {
 };
 
 //Register
-const onSubmitRegister = async (
+const onSubmitRegister = async ({
   data,
-  linked,
+  token,
+  user,
   setLoading,
   setErrorAxios,
   handleToggleModal,
   toggleModal,
-  user,
-  handleUserList
-) => {
+  userList,
+  handleUserList,
+}) => {
   try {
     setLoading((prev) => ({ ...prev, registerUser: true }));
     const res = await axios({
       method: "post",
-      url: `${import.meta.env.VITE_API_AUTH_URL}/register`,
+      url: `${import.meta.env.VITE_API_URL}/auth/register`,
       data: {
         name: data.name,
-        note: data.note,
+        surname: data.surname,
         email: data.email,
         password: data.password,
+        repassword: data.repassword,
+        role: data.role,
+        events_history: {
+          user: user,
+        },
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
     });
-    // console.log("Res register: ", res);
+    console.log("Res register: ", res);
     if ((res.status = 201)) {
-      notify("success", "Se creo el usuario con exito!");
+      notify("success", res.data.message);
       setTimeout(() => {
         handleToggleModal(!toggleModal);
-        getUserList(setLoading, user, handleUserList, setErrorAxios);
+        const updateUserList = [...userList, res.data.data];
+        handleUserList(updateUserList);
       }, 2000);
     }
   } catch (error) {
@@ -134,11 +145,6 @@ const onSubmitRegister = async (
       error.response.status === 500
     ) {
       notify("error", error.response.data.error);
-      notify(
-        "description",
-        "Usuario duplicado",
-        "El email coincide con un usuario ya registrado"
-      );
     }
   } finally {
     setLoading((prev) => ({ ...prev, registerUser: false }));
@@ -175,51 +181,46 @@ const logout = async ({
 };
 
 // Actualizar usuario
-const onSubmitEdit = async (
+const onSubmitEdit = async ({
   data,
-  type,
   token,
+  id,
+  user,
   setLoading,
   setErrorAxios,
-  handleuser,
-  user,
+  userList,
   handleUserList,
   handleToggleModal,
   toggleModal,
-  id
-) => {
-  // SI es type user falta pasar el id de ese usuario para poder actualizarlo
+}) => {
   try {
     setLoading((prev) => ({ ...prev, editUser: true }));
-    const urlUpdate =
-      type === "profile"
-        ? `${import.meta.env.VITE_API_AUTH_URL}/me`
-        : `${import.meta.env.VITE_API_BASE_URL}/users/${id}`;
-    const dataUpdate =
-      type === "profile"
-        ? {
-            name: data.name,
-            note: data.note,
-          }
-        : { name: data.name };
     const res = await axios({
       method: "put",
-      url: urlUpdate,
-      data: dataUpdate,
+      url: `${import.meta.env.VITE_API_URL}/user/${id}`,
+      data: {
+        name: data.name,
+        surname: data.surname,
+        email: data.email,
+        role: data.role,
+        events_history: {
+          user_edited_at: {
+            date: Date.now(),
+            updating_user: user,
+          },
+        },
+      },
       headers: { Authorization: `Bearer ${token}` },
     });
     console.log("Res edit user: ", res);
     if (res.status === 200) {
-      notify("success", "Se actualizo la información del usuario con éxito!");
-      if (type === "profile") {
-        getUserLogged(token, handleuser);
-      }
-      if (type === "user") {
-        setTimeout(() => {
-          handleToggleModal(!toggleModal);
-          getUserList(setLoading, user, handleUserList, setErrorAxios);
-        }, 3000);
-      }
+      notify("success", res.data.message);
+      setTimeout(() => {
+        const user = res.data.updated;
+        const updateUserList = userList.map((u) => (u._id === id ? user : u));
+        handleUserList(updateUserList);
+        handleToggleModal(!toggleModal);
+      }, 3000);
     }
   } catch (error) {
     console.log(error);
@@ -241,57 +242,30 @@ const onSubmitEdit = async (
 };
 
 // Eliminar usuario
-const deleteUser = async (
+const deleteUser = async ({
   id,
-  type,
   token,
   setLoading,
   setErrorAxios,
   handleToggleModal,
   toggleModal,
+  userList,
   handleUserList,
-  user,
-  navigate,
-  resetAuth,
-  resetCarrier,
-  resetMarket,
-  resetMenu,
-  resetOrder,
-  resetToggles,
-  resetUser
-) => {
-  // SI es type user falta pasar el id de ese usuario para poder eliminarlo
+}) => {
   try {
-    const urlDelete =
-      type === "profile"
-        ? `${import.meta.env.VITE_API_AUTH_URL}/me`
-        : `${import.meta.env.VITE_API_BASE_URL}/users/${id}`;
     setLoading((prev) => ({ ...prev, deleteUser: true }));
     const res = await axios({
       method: "delete",
-      url: urlDelete,
+      url: `${import.meta.env.VITE_API_URL}/user/${id}`,
       headers: { Authorization: `Bearer ${token}` },
     });
     console.log("Res delete user: ", res);
     if ((res.status = 200)) {
-      notify("success", "Se eliminó el usuario con éxito!");
+      notify("success", res.data.message);
       setTimeout(() => {
-        if (type === "profile") {
-          logout(
-            navigate,
-            resetAuth,
-            resetCarrier,
-            resetMarket,
-            resetMenu,
-            resetOrder,
-            resetToggles,
-            resetUser
-          );
-        }
-        if (type === "user") {
-          getUserList(setLoading, user, handleUserList, setErrorAxios);
-          handleToggleModal(!toggleModal);
-        }
+        const updateUserList = userList.filter((u) => u._id !== id);
+        handleUserList(updateUserList);
+        handleToggleModal(!toggleModal);
       }, 1000);
     }
   } catch (error) {

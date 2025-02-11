@@ -5,6 +5,7 @@ const initialState = {
   toggleSidebar: true,
   toggleDrop: false,
   toggleModal: false,
+  toggleModalDelete: false,
   toggleModalSide: { status: false, side: "right" },
   toggleSelect: { status: false, id: null },
   toggleAccordeon: { status: false, id: null },
@@ -35,6 +36,10 @@ export const useToggleStore = create(
       handleToggleModal: (bool) =>
         set((state) => ({
           toggleModal: bool,
+        })),
+      handleToggleModalDelete: (bool) =>
+        set((state) => ({
+          toggleModalDelete: bool,
         })),
       handleToggleModalSide: (bool, side) =>
         set((state) => ({

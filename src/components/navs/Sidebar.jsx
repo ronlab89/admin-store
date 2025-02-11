@@ -7,15 +7,15 @@ import { useToggleStore } from "@/store/toggle.store";
 import LinkMenu from "@/components/navs/LinkMenu";
 
 import Logo from "@/components/Logo";
-import User from "@/icons/User";
 import Insights from "@/icons/Insights";
-import Inventory from "../../icons/Inventory";
-import Product from "../../icons/Product";
-import Supplier from "../../icons/Supplier";
-import Customer from "../../icons/Customer";
-import Sale from "../../icons/Sale";
-import Purchase from "../../icons/Purchase";
-import Balance from "../../icons/Balance";
+import Inventory from "@/icons/Inventory";
+import Product from "@/icons/Product";
+import Supplier from "@/icons/Supplier";
+import Customer from "@/icons/Customer";
+import Sale from "@/icons/Sale";
+import Purchase from "@/icons/Purchase";
+import Balance from "@/icons/Balance";
+import Employees from "@/icons/Employees";
 
 const Sidebar = () => {
   const { linkId } = useMenuStore(
@@ -162,6 +162,20 @@ const Sidebar = () => {
         />
       ),
     },
+    {
+      id: "employees",
+      text: "Empleados",
+      url: "/empleados",
+      icon: (
+        <Employees
+          width={20}
+          height={20}
+          styles={`${
+            toggleSidebar ? "w-[20px] h-[20px]" : "w-[25px] h-[25px]"
+          }`}
+        />
+      ),
+    },
   ];
 
   return (
@@ -233,7 +247,7 @@ const Sidebar = () => {
           {/* Links */}
           <article
             id="aside-menu"
-            className={`w-full min-h-[50vh] h-[60vh] max-h-[90vh] overflow-hidden overflow-y-auto pt-0`}
+            className={`w-full min-h-[50vh] h-[80vh] max-h-[100vh] overflow-hidden overflow-y-auto pt-0`}
           >
             <ul
               className={`${

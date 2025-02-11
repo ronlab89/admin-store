@@ -105,14 +105,10 @@ const UserDropdown = () => {
                 handleToggleModalSide(!toggleModalSide.status, "right");
               }}
             >
-              <Suspense fallback={""}>
-                <LinkMenu text={"Perfil"} route={"#"} id={"profile"} />
-              </Suspense>
+              <LinkMenu text={"Perfil"} route={"#"} id={"profile"} />
             </li>
             <li>
-              <Suspense fallback={""}>
-                <LinkMenu text={"Configuración"} route={"#"} id={"settings"} />
-              </Suspense>
+              <LinkMenu text={"Configuración"} route={"#"} id={"settings"} />
             </li>
           </ul>
           <div

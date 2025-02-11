@@ -34,8 +34,10 @@ export const useAuthStore = create(
           user: {
             id: data.id,
             name: data.name,
-            note: data.note,
+            surname: data.surname,
             email: data.email,
+            role: data.role,
+            events_history: data.events_history,
           },
         })),
       handlereset: () =>

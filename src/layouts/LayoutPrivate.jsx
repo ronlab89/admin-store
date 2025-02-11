@@ -5,6 +5,10 @@ import { useShallow } from "zustand/shallow";
 
 import Sidebar from "@/components/navs/Sidebar";
 import Navbar from "@/components/navs/Navbar";
+import { lazy, Suspense } from "react";
+import { Toaster } from "sonner";
+const Modal = lazy(() => import("@/components/Modal"));
+const Delete = lazy(() => import("@/components/modals/Delete"));
 
 const LayoutPrivate = () => {
   const { logged, token } = useAuthStore(
@@ -33,7 +37,14 @@ const LayoutPrivate = () => {
         } relative overflow-x-hidden overflow-y-auto transition-transform duration-300 min-h-[88vh] max-h-[90vh] p-4 rounded-none flex justify-start items-start`}
       >
         <Outlet />
+        <Suspense fallback={""}>
+          <Modal />
+        </Suspense>
+        <Suspense fallback={""}>
+          <Delete />
+        </Suspense>
       </section>
+      <Toaster />
     </main>
   );
 };
