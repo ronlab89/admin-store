@@ -7,15 +7,23 @@ const UserDropdown = lazy(() => import("@/components/navs/UserDropdown"));
 import ToggleDarkMode from "@/components/ToggleDarkMode";
 import { getUserLogged } from "../../utils/authMethods";
 import { useAuthStore } from "../../store/auth.store";
+import { useShallow } from "zustand/shallow";
 
 const Navbar = () => {
   const toggleSidebar = useToggleStore((state) => state.toggleSidebar);
-  const token = useAuthStore((state) => state.token);
-  const handleuser = useAuthStore((state) => state.handleuser);
-  console.log({ token, handleuser });
-  useEffect(() => {
-    getUserLogged({ tokenlogin: token, handleuser: handleuser });
-  }, []);
+
+  const { user, token, handlelogin, handleuser } = useAuthStore(
+    useShallow((state) => ({
+      user: state.user,
+      token: state.token,
+      handlelogin: state.handlelogin,
+      handleuser: state.handleuser,
+    }))
+  );
+
+  // useEffect(() => {
+  //   getUserLogged({ tokenlogin: token, handleuser, handlelogin });
+  // }, []);
   return (
     <nav
       className={`${

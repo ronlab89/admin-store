@@ -7,6 +7,7 @@ import { useMenuStore } from "@/store/menu.store";
 import { useUserStore } from "@/store/user.store";
 import { logout } from "@/utils/authMethods";
 import User from "../../icons/User";
+import { useProductStore } from "../../store/product.store";
 
 const LinkMenu = lazy(() => import("@/components/navs/LinkMenu"));
 
@@ -17,16 +18,9 @@ const UserDropdown = () => {
       resetAuth: state.resetAuth,
     }))
   );
-  const { resetUser } = useUserStore(
-    useShallow((state) => ({
-      resetUser: state.resetUser,
-    }))
-  );
-  const { resetMenu } = useMenuStore(
-    useShallow((state) => ({
-      resetMenu: state.resetMenu,
-    }))
-  );
+  const resetUser = useUserStore((state) => state.resetUser);
+  const resetMenu = useMenuStore((state) => state.resetMenu);
+  const resetProduct = useProductStore((state) => state.resetProduct);
   const {
     toggleDrop,
     toggleModalSide,
@@ -92,7 +86,7 @@ const UserDropdown = () => {
       {isSubMenuOpen && (
         <div
           id="submenu"
-          className={`bg-slate-200 dark:bg-slate-800 font-poppins divide-y divide-gray-100 rounded-b-lg shadow dark:shadow-lg w-44 dark:divide-gray-700 absolute top-[30px] right-[0px] z-[1000]`}
+          className={`bg-slate-200 dark:bg-slate-800 flex flex-col content-between font-poppins rounded-b-[20px] shadow dark:shadow-lg w-[240px] h-[50vh] dark:divide-gray-700 absolute top-[30px] right-[0px] z-[1000]`}
           role="menu" // Indica que es un menú
           aria-labelledby="avatarButton"
         >
@@ -115,11 +109,11 @@ const UserDropdown = () => {
                 <LinkMenu text={"Perfil"} route={"#"} id={"profile"} />
               </Suspense>
             </li>
-            {/* <li>
+            <li>
               <Suspense fallback={""}>
                 <LinkMenu text={"Configuración"} route={"#"} id={"settings"} />
               </Suspense>
-            </li> */}
+            </li>
           </ul>
           <div
             className="py-1 text-sm"
@@ -130,6 +124,7 @@ const UserDropdown = () => {
                 resetMenu,
                 resetToggles,
                 resetUser,
+                resetProduct,
               });
               handleToggleDrop(!toggleDrop);
             }}

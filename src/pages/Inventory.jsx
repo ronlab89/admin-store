@@ -3,8 +3,22 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { useShallow } from "zustand/react/shallow";
 import { useToggleStore } from "@/store/toggle.store";
 import IndeterminateCheckbox from "@/components/datatable/IndeterminateCheckbox";
+import { useEffect, useState } from "react";
+import { getProductList } from "../utils/productMethods";
+import { useAuthStore } from "../store/auth.store";
+import { useProductStore } from "../store/product.store";
+import io from "socket.io-client";
+
+import { formatterco, formatterus } from "@/utils/formatter";
+
+import moment from "moment/moment";
+import "moment/locale/es";
 
 const Inventory = () => {
+  const socket = io(`${import.meta.env.VITE_IO_URL}`);
+  const token = useAuthStore((state) => state.token);
+  const productList = useProductStore((state) => state.productList);
+  const handleProductList = useProductStore((state) => state.handleProductList);
   const {
     toggleModalSide,
     handleModalType,
@@ -20,6 +34,31 @@ const Inventory = () => {
       handleToggleModalSide: state.handleToggleModalSide,
     }))
   );
+
+  const [loading, setLoading] = useState({});
+
+  useEffect(() => {
+    // if (productList === null) {
+    //   getProductList({ setLoading, token, handleProductList });
+    // }
+
+    socket.emit("fetchProducts"); // Solicitar productos al conectar
+    socket.on("initialProducts", (initialProducts) => {
+      console.log({ initialProducts });
+      handleProductList(initialProducts);
+    });
+
+    // Escuchar actualizaciones de stock
+    socket.on("stockUpdated", (updatedProducts) => {
+      handleProductList(updatedProducts);
+    });
+
+    // Limpiar listeners al desmontar el componente
+    return () => {
+      socket.off("initialProducts");
+      socket.off("stockUpdated");
+    };
+  }, []);
 
   const reload = () => {
     // getOrders(
@@ -59,125 +98,21 @@ const Inventory = () => {
         </div>
       ),
     },
-    columnHelper.accessor("order_name", {
-      header: "Orden",
+    columnHelper.accessor("name", {
+      header: "Producto",
     }),
-    columnHelper.accessor("shopify_obj.order_number", {
-      header: "#",
+    columnHelper.accessor("category", {
+      header: "Categoria",
     }),
-    columnHelper.accessor("createdAt", {
-      header: "Creada",
-      cell: (info) => moment(info.getValue()).format("LL"),
+    columnHelper.accessor("stock", {
+      header: "Stock",
     }),
-    columnHelper.accessor("shopify_obj.total_price", {
-      header: "Total",
-      cell: ({ row }) =>
-        row.original.shop_name === "Shopify 2bdevelopment"
-          ? formatterus.format(row.original.shopify_obj.total_price)
-          : formatterco.format(row.original.shopify_obj.total_price),
+    columnHelper.accessor("price", {
+      header: "Precio Unitario",
+      cell: ({ row }) => formatterco.format(row.original.price),
     }),
-    columnHelper.accessor("shop_name", {
-      header: "Tienda",
-    }),
-    columnHelper.accessor("line_items", {
-      header: "Artículos",
-      cell: (info) =>
-        info.getValue()?.reduce((acc, val) => acc + val.quantity, 0),
-    }),
-    columnHelper.accessor("status", {
-      header: "Estado",
-      cell: ({ row }) => (
-        <div className="flex justify-center items-center gap-2">
-          <span
-            className={`block w-2 h-2 rounded-full ${
-              row.original.status === "pending" &&
-              row.original.shopify_obj.fulfillment_status === null
-                ? "bg-gray-600"
-                : (row.original.status === "refunded" ||
-                    row.original.status === "authorized" ||
-                    row.original.status === "partially_paid" ||
-                    row.original.status === "partially_refunded") &&
-                  row.original.shopify_obj.fulfillment_status === null
-                ? "bg-yellow-600"
-                : row.original.status === "paid" &&
-                  row.original.shopify_obj.fulfillment_status === null
-                ? "bg-blue-600"
-                : row.original.status === "paid" &&
-                  row.original.shopify_obj.fulfillment_status === "fulfilled"
-                ? "bg-green-600"
-                : row.original.status === "voided" &&
-                  row.original.shopify_obj.fulfillment_status === null
-                ? "bg-red-600"
-                : ""
-            }`}
-          ></span>
-          <span>
-            {row.original.status === "pending" &&
-            row.original.shopify_obj.fulfillment_status === null
-              ? "En espera de pago"
-              : (row.original.status === "refunded" ||
-                  row.original.status === "authorized" ||
-                  row.original.status === "partially_paid" ||
-                  row.original.status === "partially_refunded") &&
-                row.original.shopify_obj.fulfillment_status === null
-              ? "En espera"
-              : row.original.status === "paid" &&
-                row.original.shopify_obj.fulfillment_status === null
-              ? "En espera de envío"
-              : row.original.status === "paid" &&
-                row.original.shopify_obj.fulfillment_status === "fulfilled"
-              ? "Enviada"
-              : row.original.status === "voided" &&
-                row.original.shopify_obj.fulfillment_status === null
-              ? "Anulada"
-              : ""}
-          </span>
-        </div>
-      ),
-    }),
-    columnHelper.accessor("", {
-      header: "Etiqueta",
-      cell: (row) => {
-        const shipping = delivers.find(
-          (item) => item.order_name === row.row.original.order_name
-        );
-        return shipping ? (
-          <div
-            className="flex justify-center items-center cursor-pointer"
-            onClick={() => {
-              handleToggleModal(!toggleModal);
-              handleModalType("label");
-              handleUrlPdf(shipping?.carrier_response_obj?.url_pdf);
-            }}
-          >
-            <Label width={15} height={15} styles="" />
-          </div>
-        ) : (
-          <span>--</span>
-        );
-      },
-    }),
-    columnHelper.accessor("", {
-      header: "Rastreo",
-      cell: (row) => {
-        const shipping = delivers.find(
-          (item) => item.order_name === row.row.original.order_name
-        );
-        return shipping ? (
-          <div className="flex justify-center items-center text-[1rem]">
-            <a
-              href={shipping?.shopify_obj?.fulfillments[0]?.tracking_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Rastrear envío en la web del transporte"
-            >
-              <TruckFast width={16} height={16} styles={""} />
-            </a>
-          </div>
-        ) : (
-          <span>--</span>
-        );
-      },
+    columnHelper.accessor("supplier", {
+      header: "Proveedor",
     }),
     columnHelper.display({
       id: "actions",
@@ -205,7 +140,7 @@ const Inventory = () => {
 
   return (
     <DataTable
-      data={[]}
+      data={productList || []}
       columns={columns}
       text={""}
       reload={reload}

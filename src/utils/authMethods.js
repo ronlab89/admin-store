@@ -3,14 +3,13 @@ import { notify } from "./alertNotify";
 import { getUserList } from "./userMethods";
 
 //Info user
-const getUserLogged = async ({ tokenlogin, handleuser }) => {
+const getUserLogged = async ({ tokenlogin, handleuser, handlelogin }) => {
   try {
     const res = await axios({
       method: "get",
       url: `${import.meta.env.VITE_API_URL}/auth/user`,
       headers: { Authorization: `Bearer ${tokenlogin}` },
     });
-    console.log("Info User: ", res);
     if (res.status === 200) {
       const data = res.data.userLogged;
       handleuser({
@@ -21,7 +20,7 @@ const getUserLogged = async ({ tokenlogin, handleuser }) => {
         role: data.role,
         events_history: data.events_history,
       });
-      refreshToken();
+      refreshToken({ handlelogin });
     }
   } catch (error) {
     console.log(error);
@@ -52,12 +51,11 @@ const onSubmitLogin = async (
       data: { email, password },
       withCredentials: true,
     });
-    console.log("Res login: ", res);
     if (res.status === 200) {
       handlelogin(true, {
         token: res.data.token,
       });
-      // getUserLogged(res.data.token, handleuser);
+      getUserLogged({ tokenlogin: res.data.token, handleuser, handlelogin });
       navigate("/dashboard");
     }
   } catch (error) {
@@ -74,7 +72,7 @@ const setTime = () => {
   }, 840000);
 };
 
-const refreshToken = async () => {
+const refreshToken = async ({ handlelogin }) => {
   try {
     const res = await axios({
       method: "post",
@@ -82,17 +80,9 @@ const refreshToken = async () => {
       withCredentials: true,
       credential: "include",
     });
-    console.log("Res refreshToken: ", res);
+    // console.log("Res refreshToken: ", res);
     if (res.status === 200) {
-      const data = res.data;
-      handleuser({
-        id: data.id,
-        name: data.name,
-        surname: data.surname,
-        email: data.email,
-        role: data.role,
-        events_history: data.events_history,
-      });
+      const data = res.data.refresh;
       handlelogin(true, {
         token: data.token,
       });
@@ -162,6 +152,7 @@ const logout = async ({
   resetMenu,
   resetToggles,
   resetUser,
+  resetProduct,
 }) => {
   try {
     const res = await axios({
@@ -174,6 +165,7 @@ const logout = async ({
       resetMenu();
       resetToggles();
       resetUser();
+      resetProduct();
       navigate("/");
     }
   } catch (error) {
