@@ -9,6 +9,8 @@ import { useAuthStore } from "@/store/auth.store";
 import Loader from "@/components/Loader";
 import { useSupplierStore } from "@/store/supplier.store";
 import { deleteSupplier } from "../../utils/supplierMethods";
+import { deleteCustomer } from "../../utils/customerMethods";
+import { useCustomerStore } from "@/store/customer.store";
 
 const Delete = () => {
   const token = useAuthStore((state) => state.token);
@@ -26,6 +28,10 @@ const Delete = () => {
   const supplierList = useSupplierStore((state) => state.supplierList);
   const handleSupplierList = useSupplierStore(
     (state) => state.handleSupplierList
+  );
+  const customerList = useCustomerStore((state) => state.customerList);
+  const handleCustomerList = useCustomerStore(
+    (state) => state.handleCustomerList
   );
 
   const [loading, setLoading] = useState({});
@@ -54,6 +60,18 @@ const Delete = () => {
         toggleModal: toggleModalDelete,
         supplierList,
         handleSupplierList,
+      });
+    }
+    if (modalType === "delete-customer") {
+      deleteCustomer({
+        id: data._id,
+        token,
+        setLoading,
+        setErrorAxios,
+        handleToggleModal: handleToggleModalDelete,
+        toggleModal: toggleModalDelete,
+        customerList,
+        handleCustomerList,
       });
     }
   };
@@ -92,6 +110,8 @@ const Delete = () => {
                   ? "a este empleado"
                   : modalType === "delete-supplier"
                   ? "a este proveedor"
+                  : modalType === "delete-customer"
+                  ? "a este cliente"
                   : ""
               }?`}</span>
             </Heading>
@@ -107,7 +127,7 @@ const Delete = () => {
             <p className="leading-0 text-slate-800 dark:text-slate-200 flex justify-start items-center gap-2">
               <span className="font-semibold">Correo electrónico: </span>
               <span>
-                {modalType === "delete"
+                {modalType === "delete" || modalType === "delete-customer"
                   ? data?.email
                   : data?.contactInfo?.email}
               </span>
@@ -134,7 +154,9 @@ const Delete = () => {
           </div>
         </div>
       </div>
-      {loading.deleteUser || loading.deleteSupplier ? (
+      {loading.deleteUser ||
+      loading.deleteSupplier ||
+      loading.deleteCustomer ? (
         <Loader type={""} />
       ) : null}
     </div>

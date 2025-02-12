@@ -5,9 +5,10 @@ import Login from "@/pages/Login";
 import NotFound from "@/pages/NotFound";
 const LayoutPrivate = lazy(() => import("@/layouts/LayoutPrivate"));
 const Dashboard = lazy(() => import("@/pages/Dashboard"));
-const Suppliers = lazy(() => import("../pages/Suppliers"));
-const Employees = lazy(() => import("../pages/Employees"));
 const Inventory = lazy(() => import("../pages/Inventory"));
+const Suppliers = lazy(() => import("../pages/Suppliers"));
+const Customers = lazy(() => import("../pages/Customers"));
+const Employees = lazy(() => import("../pages/Employees"));
 
 export const router = createBrowserRouter([
   {
@@ -51,6 +52,14 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={""}>
             <Suppliers />
+          </Suspense>
+        ),
+      },
+      {
+        path: "clientes",
+        element: (
+          <Suspense fallback={""}>
+            <Customers />
           </Suspense>
         ),
       },

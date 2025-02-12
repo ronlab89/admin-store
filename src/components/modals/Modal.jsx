@@ -2,11 +2,12 @@ import { useShallow } from "zustand/react/shallow";
 
 import { useToggleStore } from "@/store/toggle.store";
 import { lazy, Suspense } from "react";
-import CreateEditEmployee from "./forms/CreateEditEmployee";
-import CreateEditSupplier from "./forms/CreateEditSupplier";
 
 const Form = lazy(() => import("@/components/Form"));
 const X = lazy(() => import("@/icons/X"));
+const CreateEditEmployee = lazy(() => import("../forms/CreateEditEmployee"));
+const CreateEditSupplier = lazy(() => import("../forms/CreateEditSupplier"));
+const CreateEditCustomer = lazy(() => import("../forms/CreateEditCustomer"));
 
 const Modal = () => {
   const { toggleSidebar, toggleModal, handleToggleModal, modalType } =
@@ -57,6 +58,10 @@ const Modal = () => {
       ) : modalType === "edit-supplier" || modalType === "create-supplier" ? (
         <Suspense fallback={""}>
           <CreateEditSupplier />
+        </Suspense>
+      ) : modalType === "edit-customer" || modalType === "create-customer" ? (
+        <Suspense fallback={""}>
+          <CreateEditCustomer />
         </Suspense>
       ) : modalType === "login" ? (
         <Suspense fallback={""}>

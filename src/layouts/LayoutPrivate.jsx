@@ -7,7 +7,7 @@ import Sidebar from "@/components/navs/Sidebar";
 import Navbar from "@/components/navs/Navbar";
 import { lazy, Suspense } from "react";
 import { Toaster } from "sonner";
-const Modal = lazy(() => import("@/components/Modal"));
+const Modal = lazy(() => import("@/components/modals/Modal"));
 const Delete = lazy(() => import("@/components/modals/Delete"));
 
 const LayoutPrivate = () => {

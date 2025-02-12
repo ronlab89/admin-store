@@ -2,27 +2,25 @@ import React, { Suspense, useEffect, useState } from "react";
 import DataTable from "@/components/DataTable";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useShallow } from "zustand/shallow";
-import { useUserStore } from "@/store/user.store";
-import { getUserList } from "../utils/userMethods";
 import { formatterco } from "@/utils/formatter";
 import { useAuthStore } from "../store/auth.store";
 import { useToggleStore } from "@/store/toggle.store";
 import Dots from "@/icons/Dots";
 import Select from "@/components/Select";
 import Loader from "@/components/Loader";
-import { useSupplierStore } from "@/store/supplier.store";
 
 import IndeterminateCheckbox from "@/components/datatable/IndeterminateCheckbox";
 import moment from "moment/moment";
 import "moment/locale/es";
-import { getSupplierList } from "../utils/supplierMethods";
+import { useCustomerStore } from "@/store/customer.store";
+import { getCustomerList } from "../utils/customerMethods";
 
-const Suppliers = () => {
+const Customers = () => {
   const token = useAuthStore((state) => state.token);
   const user = useAuthStore((state) => state.user);
-  const supplierList = useSupplierStore((state) => state.supplierList);
-  const handleSupplierList = useSupplierStore(
-    (state) => state.handleSupplierList
+  const customerList = useCustomerStore((state) => state.customerList);
+  const handleCustomerList = useCustomerStore(
+    (state) => state.handleCustomerList
   );
   const { toggleModal, handleToggleModal, handleToggleSelect } = useToggleStore(
     useShallow((state) => ({
@@ -36,22 +34,22 @@ const Suppliers = () => {
   const [errorAxios, setErrorAxios] = useState(null);
 
   useEffect(() => {
-    if (supplierList === null) {
-      getSupplierList({
+    if (customerList === null) {
+      getCustomerList({
         setLoading,
         token,
         setErrorAxios,
-        handleSupplierList,
+        handleCustomerList,
       });
     }
   }, []);
 
   const reload = () => {
-    getSupplierList({
+    getCustomerList({
       setLoading,
       token,
       setErrorAxios,
-      handleSupplierList,
+      handleCustomerList,
     });
   };
 
@@ -83,21 +81,27 @@ const Suppliers = () => {
       ),
     },
     columnHelper.accessor("name", {
-      header: "Proveedor",
+      header: "Cliente",
+      cell: ({ row }) => (
+        <span className="w-full flex justify-center items-center gap-2">
+          <span>{row.original.name}</span>
+          <span>{row.original.surname}</span>
+        </span>
+      ),
     }),
-    columnHelper.accessor("contactInfo.email", {
+    columnHelper.accessor("email", {
       header: "Correo Electrónico",
     }),
-    columnHelper.accessor("contactInfo.phone", {
+    columnHelper.accessor("phone", {
       header: "Teléfono",
     }),
-    columnHelper.accessor("contactInfo.website", {
-      header: "Sitio Web",
+    columnHelper.accessor("address.city", {
+      header: "Ciudad",
     }),
-    columnHelper.accessor("events_history.supplier_created_at", {
+    columnHelper.accessor("events_history.customer_created_at", {
       header: "Creado",
       cell: ({ row }) =>
-        moment(row.original.events_history.supplier_created_at).format("LLL"),
+        moment(row.original.events_history.customer_created_at).format("LLL"),
     }),
     columnHelper.accessor("acciones", {
       header: "",
@@ -119,19 +123,19 @@ const Suppliers = () => {
                 {
                   name: "Detalles",
                   func: "modal",
-                  type: "details-suplier",
+                  type: "details-customer",
                   data: row.original,
                 },
                 {
                   name: "Editar",
                   func: "modal",
-                  type: "edit-supplier",
+                  type: "edit-customer",
                   data: row.original,
                 },
                 {
                   name: "Eliminar",
                   func: "modalDelete",
-                  type: "delete-supplier",
+                  type: "delete-customer",
                   data: row.original,
                 },
               ]}
@@ -149,16 +153,16 @@ const Suppliers = () => {
     <>
       <Suspense fallback={""}>
         <DataTable
-          data={supplierList || []}
+          data={customerList || []}
           columns={columns}
           text={"Crear"}
           reload={reload}
           create={handleToggleModal}
           boolean={toggleModal}
-          createTypeModal={"create-supplier"}
+          createTypeModal={"create-customer"}
         />
       </Suspense>
-      {loading.users ? (
+      {loading.customers ? (
         <Suspense fallback={""}>
           <Loader />
         </Suspense>
@@ -167,4 +171,4 @@ const Suppliers = () => {
   );
 };
 
-export default Suppliers;
+export default Customers;
