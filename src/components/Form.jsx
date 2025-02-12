@@ -30,8 +30,6 @@ const Form = () => {
     reset,
   } = useForm({
     defaultValues: {
-      name: "",
-      note: "",
       email: "",
       password: "",
     },
@@ -41,7 +39,6 @@ const Form = () => {
   const navigate = useNavigate();
 
   const onLogin = (data) => {
-    console.log({ data });
     onSubmitLogin(
       data,
       setLoading,

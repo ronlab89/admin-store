@@ -7,6 +7,8 @@ import { deleteUser } from "../../utils/authMethods";
 import { useUserStore } from "@/store/user.store";
 import { useAuthStore } from "@/store/auth.store";
 import Loader from "@/components/Loader";
+import { useSupplierStore } from "@/store/supplier.store";
+import { deleteSupplier } from "../../utils/supplierMethods";
 
 const Delete = () => {
   const token = useAuthStore((state) => state.token);
@@ -21,6 +23,10 @@ const Delete = () => {
         data: state.data,
       }))
     );
+  const supplierList = useSupplierStore((state) => state.supplierList);
+  const handleSupplierList = useSupplierStore(
+    (state) => state.handleSupplierList
+  );
 
   const [loading, setLoading] = useState({});
   const [errorAxios, setErrorAxios] = useState(null);
@@ -38,13 +44,25 @@ const Delete = () => {
         handleUserList,
       });
     }
+    if (modalType === "delete-supplier") {
+      deleteSupplier({
+        id: data._id,
+        token,
+        setLoading,
+        setErrorAxios,
+        handleToggleModal: handleToggleModalDelete,
+        toggleModal: toggleModalDelete,
+        supplierList,
+        handleSupplierList,
+      });
+    }
   };
 
   return (
     <div
       id="static-modal"
       data-modal-backdrop="static"
-      tabindex="-1"
+      tabIndex="-1"
       aria-hidden="true"
       className={`${
         toggleModalDelete ? "" : "hidden"
@@ -70,7 +88,11 @@ const Delete = () => {
           <div className="p-4 space-y-4 text-sm">
             <Heading type="h3" variant="" className="font-normal">
               <span>{`¿Estás seguro de que quieres eliminar ${
-                modalType === "delete" ? "a este empleado" : ""
+                modalType === "delete"
+                  ? "a este empleado"
+                  : modalType === "delete-supplier"
+                  ? "a este proveedor"
+                  : ""
               }?`}</span>
             </Heading>
             <p className="text-base leading-0 text-slate-800 dark:text-slate-200 mb-10">
@@ -79,12 +101,16 @@ const Delete = () => {
             <p className="leading-0 text-slate-800 dark:text-slate-200 flex justify-start items-center gap-2">
               <span className="font-semibold">Nombre: </span>
               <span>
-                {data.name} {data.surname}
+                {data?.name} {data?.surname}
               </span>
             </p>
             <p className="leading-0 text-slate-800 dark:text-slate-200 flex justify-start items-center gap-2">
               <span className="font-semibold">Correo electrónico: </span>
-              <span>{data.email}</span>
+              <span>
+                {modalType === "delete"
+                  ? data?.email
+                  : data?.contactInfo?.email}
+              </span>
             </p>
           </div>
           {/* <!-- Modal footer --> */}
@@ -108,7 +134,9 @@ const Delete = () => {
           </div>
         </div>
       </div>
-      {loading.deleteUser ? <Loader type={""} /> : null}
+      {loading.deleteUser || loading.deleteSupplier ? (
+        <Loader type={""} />
+      ) : null}
     </div>
   );
 };

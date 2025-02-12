@@ -12,6 +12,8 @@ import { useAuthStore } from "@/store/auth.store";
 import { useToggleStore } from "@/store/toggle.store";
 import { useUserStore } from "@/store/user.store";
 import Loader from "@/components/Loader";
+import Letter from "@/icons/Letter";
+import Email from "@/icons/Email";
 
 const CreateEditEmployee = () => {
   const token = useAuthStore((state) => state.token);
@@ -103,7 +105,7 @@ const CreateEditEmployee = () => {
         >
           <div className="w-full">
             <InputText
-              icon={<User width={16} height={16} styles={""} />}
+              icon={<Letter width={16} height={16} styles={""} />}
               type={"text"}
               text={"Nombre"}
               placeholder={
@@ -121,7 +123,7 @@ const CreateEditEmployee = () => {
           </div>
           <div className="w-full">
             <InputText
-              icon={<Password width={16} height={16} styles={""} />}
+              icon={<Letter width={16} height={16} styles={""} />}
               type={"text"}
               text={"Apellido"}
               placeholder={
@@ -139,7 +141,7 @@ const CreateEditEmployee = () => {
           </div>
           <div className="w-full">
             <InputText
-              icon={<User width={16} height={16} styles={""} />}
+              icon={<Email width={16} height={16} styles={""} />}
               type={"email"}
               text={"Correo electrónico"}
               placeholder={
@@ -183,7 +185,7 @@ const CreateEditEmployee = () => {
             <>
               <div className="w-full">
                 <InputText
-                  icon={<User width={16} height={16} styles={""} />}
+                  icon={<Password width={16} height={16} styles={""} />}
                   type={"password"}
                   text={"Contraseña"}
                   placeholder={"Crea una contraseña segura"}

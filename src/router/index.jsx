@@ -3,10 +3,11 @@ import { createBrowserRouter } from "react-router-dom";
 import LayoutPublic from "@/layouts/LayoutPublic";
 import Login from "@/pages/Login";
 import NotFound from "@/pages/NotFound";
-import Inventory from "../pages/Inventory";
-import Employees from "../pages/Employees";
 const LayoutPrivate = lazy(() => import("@/layouts/LayoutPrivate"));
 const Dashboard = lazy(() => import("@/pages/Dashboard"));
+const Suppliers = lazy(() => import("../pages/Suppliers"));
+const Employees = lazy(() => import("../pages/Employees"));
+const Inventory = lazy(() => import("../pages/Inventory"));
 
 export const router = createBrowserRouter([
   {
@@ -42,6 +43,14 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={""}>
             <Inventory />
+          </Suspense>
+        ),
+      },
+      {
+        path: "proveedores",
+        element: (
+          <Suspense fallback={""}>
+            <Suppliers />
           </Suspense>
         ),
       },

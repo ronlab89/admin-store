@@ -10,19 +10,18 @@ import { useToggleStore } from "@/store/toggle.store";
 import Dots from "@/icons/Dots";
 import Select from "@/components/Select";
 import Loader from "@/components/Loader";
+import { useSupplierStore } from "@/store/supplier.store";
 
 import IndeterminateCheckbox from "@/components/datatable/IndeterminateCheckbox";
 import moment from "moment/moment";
 import "moment/locale/es";
-
-const Employees = () => {
+import { getSupplierList } from "../utils/supplierMethods";
+const Suppliers = () => {
   const token = useAuthStore((state) => state.token);
   const user = useAuthStore((state) => state.user);
-  const { userList, handleUserList } = useUserStore(
-    useShallow((state) => ({
-      userList: state.userList,
-      handleUserList: state.handleUserList,
-    }))
+  const supplierList = useSupplierStore((state) => state.supplierList);
+  const handleSupplierList = useSupplierStore(
+    (state) => state.handleSupplierList
   );
   const { toggleModal, handleToggleModal, handleToggleSelect } = useToggleStore(
     useShallow((state) => ({
@@ -36,13 +35,23 @@ const Employees = () => {
   const [errorAxios, setErrorAxios] = useState(null);
 
   useEffect(() => {
-    if (userList === null) {
-      getUserList({ setLoading, token, setErrorAxios, user, handleUserList });
+    if (supplierList === null) {
+      getSupplierList({
+        setLoading,
+        token,
+        setErrorAxios,
+        handleSupplierList,
+      });
     }
   }, []);
 
   const reload = () => {
-    getUserList({ setLoading, token, setErrorAxios, user, handleUserList });
+    getSupplierList({
+      setLoading,
+      token,
+      setErrorAxios,
+      handleSupplierList,
+    });
   };
 
   const columnHelper = createColumnHelper();
@@ -73,21 +82,21 @@ const Employees = () => {
       ),
     },
     columnHelper.accessor("name", {
-      header: "Nombre",
+      header: "Proveedor",
     }),
-    columnHelper.accessor("surname", {
-      header: "Apellido",
+    columnHelper.accessor("contactInfo.email", {
+      header: "Correo Electrónico",
     }),
-    columnHelper.accessor("email", {
-      header: "Correo Electronico",
+    columnHelper.accessor("contactInfo.phone", {
+      header: "Teléfono",
     }),
-    columnHelper.accessor("role", {
-      header: "Cargo",
+    columnHelper.accessor("contactInfo.website", {
+      header: "Sitio Web",
     }),
-    columnHelper.accessor("events_history.user_created_at", {
+    columnHelper.accessor("events_history.supplier_created_at", {
       header: "Creado",
       cell: ({ row }) =>
-        moment(row.original.events_history.user_created_at).format("LLL"),
+        moment(row.original.events_history.supplier_created_at).format("LLL"),
     }),
     columnHelper.accessor("acciones", {
       header: "",
@@ -107,21 +116,21 @@ const Employees = () => {
             <Select
               actions={[
                 {
-                  name: "Perfil",
+                  name: "Detalles",
                   func: "modal",
-                  type: "profile",
+                  type: "details-suplier",
                   data: row.original,
                 },
                 {
                   name: "Editar",
                   func: "modal",
-                  type: "edit",
+                  type: "edit-supplier",
                   data: row.original,
                 },
                 {
                   name: "Eliminar",
                   func: "modalDelete",
-                  type: "delete",
+                  type: "delete-supplier",
                   data: row.original,
                 },
               ]}
@@ -139,13 +148,13 @@ const Employees = () => {
     <>
       <Suspense fallback={""}>
         <DataTable
-          data={userList || []}
+          data={supplierList || []}
           columns={columns}
           text={"Crear"}
           reload={reload}
           create={handleToggleModal}
           boolean={toggleModal}
-          createTypeModal={"register"}
+          createTypeModal={"create-supplier"}
         />
       </Suspense>
       {loading.users ? (
@@ -157,4 +166,4 @@ const Employees = () => {
   );
 };
 
-export default Employees;
+export default Suppliers;

@@ -203,7 +203,9 @@ const DataTable = ({
       <table
         className={`w-full h-full rounded-[0rem] overflow-hidden mt-10 z-10`}
       >
-        <thead className={`text-center rounded-[0rem] z-10`}>
+        <thead
+          className={`text-center rounded-[0rem] font-medium tracking-[0.01rem] z-10`}
+        >
           {table.getHeaderGroups().map((headerGroup) => (
             <tr
               key={headerGroup.id}

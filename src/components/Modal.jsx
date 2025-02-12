@@ -3,6 +3,7 @@ import { useShallow } from "zustand/react/shallow";
 import { useToggleStore } from "@/store/toggle.store";
 import { lazy, Suspense } from "react";
 import CreateEditEmployee from "./forms/CreateEditEmployee";
+import CreateEditSupplier from "./forms/CreateEditSupplier";
 
 const Form = lazy(() => import("@/components/Form"));
 const X = lazy(() => import("@/icons/X"));
@@ -37,9 +38,6 @@ const Modal = () => {
       <span
         onClick={() => {
           handleToggleModal(!toggleModal);
-          handleUrlPdf([]);
-          handleOrderDetails([]);
-          setLabelBase64([]);
         }}
         className="absolute left-4 top-2 cursor-pointer border-0 w-8 h-8 flex justify-center items-center rounded-full bg-slate-200 dark:bg-slate-800 z-[70]"
       >
@@ -55,6 +53,10 @@ const Modal = () => {
       {modalType === "edit" ? (
         <Suspense fallback={""}>
           <CreateEditEmployee />
+        </Suspense>
+      ) : modalType === "edit-supplier" || modalType === "create-supplier" ? (
+        <Suspense fallback={""}>
+          <CreateEditSupplier />
         </Suspense>
       ) : modalType === "login" ? (
         <Suspense fallback={""}>

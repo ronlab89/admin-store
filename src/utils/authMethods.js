@@ -62,6 +62,7 @@ const onSubmitLogin = async (
   } catch (error) {
     console.log(error);
     setErrorLogin(error?.response?.data);
+    notify("error", error.response.data.error);
   } finally {
     setLoading((prev) => ({ ...prev, login: false }));
   }
@@ -176,7 +177,9 @@ const logout = async ({
     }
   } catch (error) {
     console.log(error);
+    notify("error", error.response.data.error);
   } finally {
+    notify("success", "Se ha cerrado la sesión");
   }
 };
 
