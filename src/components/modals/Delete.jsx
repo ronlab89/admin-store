@@ -19,6 +19,7 @@ import { deletePaymentMethod } from "../../utils/paymentMethods";
 import { usePaymentMethodStore } from "@/store/paymentMethod.store";
 import { deleteExpenseCategory } from "../../utils/expenseCategoryMethods";
 import { useExpenseCategoryStore } from "@/store/expenseCategory.store";
+import Button from "../Button";
 
 const Delete = () => {
   const token = useAuthStore((state) => state.token);
@@ -240,22 +241,24 @@ const Delete = () => {
           </div>
           {/* <!-- Modal footer --> */}
           <div className="flex justify-end items-end gap-4 p-8 border-t-0 border-slate-200 rounded-b dark:border-slate-800">
-            <button
-              data-modal-hide="static-modal"
-              type="button"
+            <Button
+              text={"Cancelar"}
               onClick={() => handleToggleModalDelete(!toggleModalDelete)}
-              className="py-1.5 px-5 ms-3 text-sm font-medium text-slate-800 border-0 focus:outline-none !bg-slate-100 rounded-md border-slate-100 hover:!bg-slate-300 hover:text-slate-700 focus:z-10 focus:ring-0 focus:ring-gray-100 dark:focus:ring-gray-700 dark:!bg-slate-900 dark:text-slate-200 dark:border-slate-800 dark:hover:text-slate-200 dark:hover:!bg-slate-700 transition-colors"
-            >
-              Cancelar
-            </button>
-            <button
-              data-modal-hide="static-modal"
-              type="button"
+              icon={""}
+              type={"button"}
+              styles={"cursor-pointer mt-5"}
+              mode={"default"}
+              variant={"cancel"}
+            />
+            <Button
+              text={"Eliminar"}
               onClick={() => handleDelete(modalType)}
-              className="text-slate-100 dark:text-slate-200 border-0 !bg-red-500 hover:!bg-red-600 focus:ring-0 focus:outline-none focus:ring-red-300 font-medium rounded-md text-sm px-5 py-1.5 text-center dark:!bg-red-600 dark:hover:!bg-red-400 dark:focus:ring-red-800 transition-colors"
-            >
-              Eliminar
-            </button>
+              icon={""}
+              type={"button"}
+              styles={"cursor-pointer mt-5"}
+              mode={"default"}
+              variant={"danger"}
+            />
           </div>
         </div>
       </div>
