@@ -103,7 +103,7 @@ const Inventory = () => {
     columnHelper.accessor("name", {
       header: "Producto",
     }),
-    columnHelper.accessor("category", {
+    columnHelper.accessor("category.name", {
       header: "Categoria",
     }),
     columnHelper.accessor("stock", {
@@ -113,7 +113,7 @@ const Inventory = () => {
       header: "Precio Unitario",
       cell: ({ row }) => formatterco.format(row.original.price),
     }),
-    columnHelper.accessor("supplier", {
+    columnHelper.accessor("supplier.name", {
       header: "Proveedor",
     }),
     columnHelper.display({

@@ -13,6 +13,8 @@ import { deleteCustomer } from "../../utils/customerMethods";
 import { useCustomerStore } from "@/store/customer.store";
 import { deleteProductCategory } from "../../utils/productCategoryMethods";
 import { useProductCategoryStore } from "@/store/productCategory";
+import { deleteProduct } from "../../utils/productMethods";
+import { useProductStore } from "../../store/product.store";
 
 const Delete = () => {
   const token = useAuthStore((state) => state.token);
@@ -41,6 +43,8 @@ const Delete = () => {
   const handleProductCategoryList = useProductCategoryStore(
     (state) => state.handleProductCategoryList
   );
+  const productList = useProductStore((state) => state.productList);
+  const handleProductList = useProductStore((state) => state.handleProductList);
 
   const [loading, setLoading] = useState({});
   const [errorAxios, setErrorAxios] = useState(null);
@@ -94,6 +98,18 @@ const Delete = () => {
         handleProductCategoryList,
       });
     }
+    if (modalType === "delete-product") {
+      deleteProduct({
+        id: data._id,
+        token,
+        setLoading,
+        setErrorAxios,
+        handleToggleModal: handleToggleModalDelete,
+        toggleModal: toggleModalDelete,
+        productList,
+        handleProductList,
+      });
+    }
   };
 
   return (
@@ -128,6 +144,8 @@ const Delete = () => {
               <span>{`¿Estás seguro de que quieres eliminar ${
                 modalType === "delete"
                   ? "a este empleado"
+                  : modalType === "delete-product"
+                  ? "a este producto"
                   : modalType === "delete-supplier"
                   ? "a este proveedor"
                   : modalType === "delete-customer"
@@ -154,14 +172,16 @@ const Delete = () => {
             </p>
             <p className="leading-0 text-slate-800 dark:text-slate-200 flex justify-start items-center gap-2">
               <span className="font-medium">
-                {modalType === "delete-product-category"
+                {modalType === "delete-product-category" ||
+                modalType === "delete-product"
                   ? "Descripción:"
                   : "Correo electrónico:"}
               </span>
               <span>
                 {modalType === "delete" || modalType === "delete-customer"
                   ? data?.email
-                  : modalType === "delete-product-category"
+                  : modalType === "delete-product-category" ||
+                    modalType === "delete-product"
                   ? data?.description
                   : data?.contactInfo?.email}
               </span>
@@ -189,6 +209,7 @@ const Delete = () => {
         </div>
       </div>
       {loading.deleteUser ||
+      loading.deleteProduct ||
       loading.deleteSupplier ||
       loading.deleteCustomer ||
       loading.deleteProductCategory ? (

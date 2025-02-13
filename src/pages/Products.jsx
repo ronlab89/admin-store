@@ -8,9 +8,14 @@ import { getProductList } from "../utils/productMethods";
 import { useAuthStore } from "../store/auth.store";
 import { useProductStore } from "../store/product.store";
 import Loader from "@/components/Loader";
-import Details from "@/icons/Details";
+import Dots from "@/icons/Dots";
+import Select from "@/components/Select";
 
 import { formatterco, formatterus } from "@/utils/formatter";
+import { getProductCategoryList } from "../utils/productCategoryMethods";
+import { getSupplierList } from "../utils/supplierMethods";
+import { useProductCategoryStore } from "@/store/productCategory";
+import { useSupplierStore } from "@/store/supplier.store";
 
 import moment from "moment/moment";
 import "moment/locale/es";
@@ -25,6 +30,7 @@ const Products = () => {
     toggleModal,
     handleToggleModal,
     handleToggleModalSide,
+    handleToggleSelect,
   } = useToggleStore(
     useShallow((state) => ({
       toggleModalSide: state.toggleModalSide,
@@ -32,23 +38,47 @@ const Products = () => {
       toggleModal: state.toggleModal,
       handleToggleModal: state.handleToggleModal,
       handleToggleModalSide: state.handleToggleModalSide,
+      handleToggleSelect: state.handleToggleSelect,
     }))
+  );
+  const supplierList = useSupplierStore((state) => state.supplierList);
+  const handleSupplierList = useSupplierStore(
+    (state) => state.handleSupplierList
+  );
+  const productCategoryList = useProductCategoryStore(
+    (state) => state.productCategoryList
+  );
+  const handleProductCategoryList = useProductCategoryStore(
+    (state) => state.handleProductCategoryList
   );
 
   const [loading, setLoading] = useState({});
+  const [errorAxios, setErrorAxios] = useState({});
 
   useEffect(() => {
     if (productList === null) {
       getProductList({ setLoading, token, handleProductList });
     }
+    if (productCategoryList === null) {
+      getProductCategoryList({
+        token,
+        setLoading,
+        setErrorAxios,
+        handleProductCategoryList,
+      });
+    }
+    if (supplierList === null) {
+      getSupplierList({
+        setLoading,
+        token,
+        setErrorAxios,
+        handleSupplierList,
+      });
+    }
   }, []);
 
   const reload = () => {
-    getOrders({
-      setLoading,
-      token,
-      handleProductList,
-    });
+    getProductList({ setLoading, token, handleProductList });
   };
 
   const columnHelper = createColumnHelper();
@@ -81,7 +111,7 @@ const Products = () => {
     columnHelper.accessor("name", {
       header: "Producto",
     }),
-    columnHelper.accessor("category", {
+    columnHelper.accessor("category.name", {
       header: "Categoria",
     }),
     columnHelper.accessor("description", {
@@ -91,25 +121,50 @@ const Products = () => {
       header: "Precio Unitario",
       cell: ({ row }) => formatterco.format(row.original.price),
     }),
-    columnHelper.accessor("supplier", {
+    columnHelper.accessor("supplier.name", {
       header: "Proveedor",
     }),
-    columnHelper.display({
-      id: "actions",
+    columnHelper.accessor("acciones", {
       header: "",
-      cell: ({ row }) => (
-        <div className="flex gap-2 justify-center">
+      cell: ({ row, table }) => (
+        <div className="flex justify-center gap-2 relative">
           <button
-            onClick={() => {
-              handleOrderDetails(row.original);
-              navigate(`/inicio/orden`);
-              handleLinkId("order-details");
-              handleSubLinkId("");
-            }}
-            className="font-bold text-slate-800 hover:text-teal-600 dark:text-slate-200 dark:hover:text-teal-400 hover:transition-colors"
+            onClick={() => handleToggleSelect(true, row.original._id)}
+            className="inline-flex gap-2 items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-transparent hover:bg-gray-100 dark:hover:bg-Shippingco-850 cursor-pointer hover:text-teal-600 dark:hover:text-teal-400 rounded-md px-2 text-xs h-7 border-none"
+            type="button"
+            id="radix-:r48:"
           >
-            <Details width={20} height={20} styles={""} />
+            <Dots width={18} height={18} styles={""} />
+
+            <span className="sr-only">Open menu</span>
           </button>
+          <div className="absolute top-[-50px] left-[-65px]">
+            <Select
+              actions={[
+                {
+                  name: "Detalles",
+                  func: "modal",
+                  type: "details-product",
+                  data: row.original,
+                },
+                {
+                  name: "Editar",
+                  func: "modal",
+                  type: "edit-product",
+                  data: row.original,
+                },
+                {
+                  name: "Eliminar",
+                  func: "modalDelete",
+                  type: "delete-product",
+                  data: row.original,
+                },
+              ]}
+              id={row.original._id}
+              rowIndex={row.index}
+              totalRows={table.getRowModel().rows.length}
+            />
+          </div>
         </div>
       ),
     }),
