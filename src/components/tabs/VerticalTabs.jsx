@@ -1,36 +1,19 @@
 import { lazy, Suspense, useEffect, useState } from "react";
-import Category from "../../icons/Category";
 import InputText from "@/components/InputText";
 import Letter from "@/icons/Letter";
 import { useForm } from "react-hook-form";
 import { formValidate } from "@/utils/formValidate";
-import { useAuthStore } from "../../store/auth.store";
 const Loader = lazy(() => import("@/components/Loader"));
 import Dots from "@/icons/Dots";
 import Select from "@/components/Select";
-import { useProductCategoryStore } from "@/store/productCategory";
 import { useToggleStore } from "@/store/toggle.store";
 import { useShallow } from "zustand/shallow";
 import Button from "@/components/Button";
-import {
-  createProductCategory,
-  updateProductCategory,
-} from "../../utils/productCategoryMethods";
 import Save from "@/icons/Save";
 
-const VerticalTabs = ({ data }) => {
-  const token = useAuthStore((state) => state.token);
-  const user = useAuthStore((state) => state.user);
-  const productCategoryList = useProductCategoryStore(
-    (state) => state.productCategoryList
-  );
-  const handleProductCategoryList = useProductCategoryStore(
-    (state) => state.handleProductCategoryList
-  );
-  const { toggleModal, handleToggleModal, handleToggleSelect } = useToggleStore(
+const VerticalTabs = ({ data, list, icon, type, createMethod, editMethod }) => {
+  const { handleToggleSelect } = useToggleStore(
     useShallow((state) => ({
-      toggleModal: state.toggleModal,
-      handleToggleModal: state.handleToggleModal,
       handleToggleSelect: state.handleToggleSelect,
     }))
   );
@@ -44,6 +27,7 @@ const VerticalTabs = ({ data }) => {
 
   const [loading, setLoading] = useState({});
   const [errorAxios, setErrorAxios] = useState(null);
+
   const {
     register,
     handleSubmit,
@@ -57,34 +41,16 @@ const VerticalTabs = ({ data }) => {
     },
   });
 
-  const { required, validateTrim, minLength, patternEmail } = formValidate();
+  const { required, validateTrim } = formValidate();
 
   const onRegister = (data) => {
-    console.log({ data });
-    createProductCategory({
-      data,
-      token,
-      setLoading,
-      setErrorAxios,
-      productCategoryList,
-      handleProductCategoryList,
-    });
+    createMethod(data, setLoading, setErrorAxios);
   };
 
   const onEdit = ({ name, description }) => {
-    console.log({ name, description, data: isEdit.data });
-    updateProductCategory({
-      data: { name, description },
-      token,
-      id: isEdit.data._id,
-      user: user.id,
-      setLoading,
-      setErrorAxios,
-      productCategoryList,
-      handleProductCategoryList,
-      handleToggleSelect,
-      setIsEdit,
-    });
+    editMethod({ name, description }, isEdit, setLoading, setErrorAxios);
+    handleToggleSelect(false, null);
+    setIsEdit({ status: false, id: null, data: null });
   };
 
   useEffect(() => {
@@ -93,7 +59,7 @@ const VerticalTabs = ({ data }) => {
   }, [inputValue.name, inputValue.description, setValue]);
 
   useEffect(() => {
-    if (activeTab === "Custom" || isEdit.status)
+    if (activeTab === "custom" || isEdit.status)
       reset({
         name: "",
         description: "",
@@ -116,16 +82,17 @@ const VerticalTabs = ({ data }) => {
                         rounded-[.5rem] active w-full hover:transition-colors`}
             aria-current="page"
           >
-            <Category width={20} height={20} />
-            {item?.title}
+            {icon}
+            {item?.name}
           </li>
         ))}
       </ul>
       <article className=" p-6 bg-slate-100 text-medium text-slate-800 dark:text-slate-200 dark:bg-slate-900 rounded-[.5rem] w-full">
         <p className="mb-4 text-sm">
-          A la izquierda, puedes seleccionar una categoria general, y luego
-          seleccionar una subcategoria. Si no encuentras la que buscas,
-          selecciona Personalizado y crea una subcategoria nueva.
+          A la izquierda, selecciona el área que mejor se adapte a tus
+          necesidades y luego elige la categoría correspondiente. Si no
+          encuentras la opción que buscas, selecciona Personalizado para crear
+          una nueva categoría.
         </p>
         <div className="flex flex-wrap justify-start gap-6">
           {data
@@ -159,7 +126,7 @@ const VerticalTabs = ({ data }) => {
               className="w-full flex gap-5 justify-center items-center"
               noValidate
             >
-              {activeTab === "Custom" ? (
+              {activeTab === "custom" ? (
                 <>
                   <InputText
                     icon={<Letter width={16} height={16} styles={""} />}
@@ -247,10 +214,16 @@ const VerticalTabs = ({ data }) => {
             </form>
           </div>
           <p className="text-sm font-medium">
-            Lista de categorias de productos creadas
+            {type === "product-category"
+              ? "Lista de categorias de productos creadas"
+              : type === "payment-method"
+              ? "Lista de métodos de pago"
+              : type === "expense-category"
+              ? "Lista de categorías de gastos"
+              : ""}
           </p>
           <div className="w-full min-h-[45vh] max-h-full overflow-x-hidden overflow-y-auto border-2 border-slate-200 dark:border-slate-800 rounded-[.5rem]">
-            {productCategoryList?.map((item, index) => (
+            {list?.map((item, index) => (
               <form
                 key={item._id}
                 onSubmit={handleSubmit(onEdit)}
@@ -336,13 +309,13 @@ const VerticalTabs = ({ data }) => {
                         {
                           name: "Editar",
                           func: "isEdit",
-                          type: "edit-product-category",
+                          type: `edit-${type}`,
                           data: item,
                         },
                         {
                           name: "Eliminar",
                           func: "modalDelete",
-                          type: "delete-product-category",
+                          type: `delete-${type}`,
                           data: item,
                         },
                       ]}

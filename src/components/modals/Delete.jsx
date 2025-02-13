@@ -15,6 +15,10 @@ import { deleteProductCategory } from "../../utils/productCategoryMethods";
 import { useProductCategoryStore } from "@/store/productCategory";
 import { deleteProduct } from "../../utils/productMethods";
 import { useProductStore } from "../../store/product.store";
+import { deletePaymentMethod } from "../../utils/paymentMethods";
+import { usePaymentMethodStore } from "@/store/paymentMethod.store";
+import { deleteExpenseCategory } from "../../utils/expenseCategoryMethods";
+import { useExpenseCategoryStore } from "@/store/expenseCategory.store";
 
 const Delete = () => {
   const token = useAuthStore((state) => state.token);
@@ -45,6 +49,18 @@ const Delete = () => {
   );
   const productList = useProductStore((state) => state.productList);
   const handleProductList = useProductStore((state) => state.handleProductList);
+  const paymentMethodList = usePaymentMethodStore(
+    (state) => state.paymentMethodList
+  );
+  const handlePaymentMethodList = usePaymentMethodStore(
+    (state) => state.handlePaymentMethodList
+  );
+  const expenseCategoryList = useExpenseCategoryStore(
+    (state) => state.expenseCategoryList
+  );
+  const handleExpenseCategoryList = useExpenseCategoryStore(
+    (state) => state.handleExpenseCategoryList
+  );
 
   const [loading, setLoading] = useState({});
   const [errorAxios, setErrorAxios] = useState(null);
@@ -110,6 +126,30 @@ const Delete = () => {
         handleProductList,
       });
     }
+    if (modalType === "delete-payment-method") {
+      deletePaymentMethod({
+        id: data._id,
+        token,
+        setLoading,
+        setErrorAxios,
+        handleToggleModal: handleToggleModalDelete,
+        toggleModal: toggleModalDelete,
+        paymentMethodList,
+        handlePaymentMethodList,
+      });
+    }
+    if (modalType === "delete-expense-category") {
+      deleteExpenseCategory({
+        id: data._id,
+        token,
+        setLoading,
+        setErrorAxios,
+        handleToggleModal: handleToggleModalDelete,
+        toggleModal: toggleModalDelete,
+        expenseCategoryList,
+        handleExpenseCategoryList,
+      });
+    }
   };
 
   return (
@@ -124,7 +164,7 @@ const Delete = () => {
     >
       <div className="relative p-4 w-full max-w-2xl max-h-full">
         {/* <!-- Modal content --> */}
-        <div className="relative bg-slate-200 rounded-[20px] shadow-md dark:bg-slate-800">
+        <div className="relative bg-slate-200 rounded-[20px] shadow-md dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700">
           {/* <!-- Modal header --> */}
           <div className="flex items-center justify-between p-8 border-b-0 rounded-t dark:border-slate-800 border-slate-200">
             <span className="w-8 h-8 flex justify-center items-center bg-red-100 rounded-[20px]">
@@ -152,6 +192,10 @@ const Delete = () => {
                   ? "a este cliente"
                   : modalType === "delete-product-category"
                   ? "a esta categoria de producto"
+                  : modalType === "delete-payment-method"
+                  ? "a este método de pago"
+                  : modalType === "delete-expense-category"
+                  ? "a esta categoria de gastos"
                   : ""
               }?`}</span>
             </Heading>
@@ -161,8 +205,11 @@ const Delete = () => {
             <p className="leading-0 text-slate-800 dark:text-slate-200 flex justify-start items-center gap-2">
               <span className="font-medium">
                 {" "}
-                {modalType === "delete-product-category"
+                {modalType === "delete-product-category" ||
+                modalType === "delete-expense-category"
                   ? "Categoria"
+                  : modalType === "delete-payment-method"
+                  ? "Método de pago"
                   : "Nombre"}
                 :{" "}
               </span>
@@ -173,7 +220,9 @@ const Delete = () => {
             <p className="leading-0 text-slate-800 dark:text-slate-200 flex justify-start items-center gap-2">
               <span className="font-medium">
                 {modalType === "delete-product-category" ||
-                modalType === "delete-product"
+                modalType === "delete-expense-category" ||
+                modalType === "delete-product" ||
+                modalType === "delete-payment-method"
                   ? "Descripción:"
                   : "Correo electrónico:"}
               </span>
@@ -181,7 +230,9 @@ const Delete = () => {
                 {modalType === "delete" || modalType === "delete-customer"
                   ? data?.email
                   : modalType === "delete-product-category" ||
-                    modalType === "delete-product"
+                    modalType === "delete-expense-category" ||
+                    modalType === "delete-product" ||
+                    modalType === "delete-payment-method"
                   ? data?.description
                   : data?.contactInfo?.email}
               </span>

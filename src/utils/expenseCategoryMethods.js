@@ -1,47 +1,47 @@
 import axios from "axios";
 import { notify } from "./alertNotify";
 
-const getProductCategoryList = async ({
+const getExpenseCategoryList = async ({
   token,
   setLoading,
   setErrorAxios,
-  handleProductCategoryList,
+  handleExpenseCategoryList,
 }) => {
   try {
-    setLoading((prev) => ({ ...prev, productCategoryList: true }));
+    setLoading((prev) => ({ ...prev, expenseCategoryList: true }));
     const res = await axios({
       method: "get",
-      url: `${import.meta.env.VITE_API_URL}/product-category/list`,
+      url: `${import.meta.env.VITE_API_URL}/expense-category/list`,
       headers: { Authorization: `Bearer ${token}` },
     });
-    console.log("Res product category list: ", res);
+    console.log("Res expense category list: ", res);
     if (res.status === 200) {
-      handleProductCategoryList(res.data.allProductCategorys);
+      handleExpenseCategoryList(res.data.allExpenseCategorys);
     }
   } catch (error) {
     console.log(error);
     setErrorAxios(error?.response?.data);
     notify("error", error?.response?.data);
   } finally {
-    setLoading((prev) => ({ ...prev, productCategoryList: false }));
+    setLoading((prev) => ({ ...prev, expenseCategoryList: false }));
   }
 };
 
-const createProductCategory = async ({
+const createExpenseCategory = async ({
   data,
   token,
   user,
   setLoading,
   setErrorAxios,
-  productCategoryList,
-  handleProductCategoryList,
+  expenseCategoryList,
+  handleExpenseCategoryList,
 }) => {
   console.log({ data });
   try {
-    setLoading((prev) => ({ ...prev, createProductCategory: true }));
+    setLoading((prev) => ({ ...prev, createExpenseCategory: true }));
     const res = await axios({
       method: "post",
-      url: `${import.meta.env.VITE_API_URL}/product-category/create`,
+      url: `${import.meta.env.VITE_API_URL}/expense-category/create`,
       data: {
         name: data.name,
         description: data.description,
@@ -51,11 +51,11 @@ const createProductCategory = async ({
       },
       headers: { Authorization: `Bearer ${token}` },
     });
-    console.log("Res create product category: ", res);
+    console.log("Res create expense category: ", res);
     if (res.status === 201) {
       notify("success", res.data.message);
-      const updateProductCategoryList = [...productCategoryList, res.data.data];
-      handleProductCategoryList(updateProductCategoryList);
+      const updateExpenseCategoryList = [...expenseCategoryList, res.data.data];
+      handleExpenseCategoryList(updateExpenseCategoryList);
     }
   } catch (error) {
     console.log(error);
@@ -69,30 +69,30 @@ const createProductCategory = async ({
       notify("error", error.response.data.error);
     }
   } finally {
-    setLoading((prev) => ({ ...prev, createProductCategory: false }));
+    setLoading((prev) => ({ ...prev, createExpenseCategory: false }));
   }
 };
 
-const updateProductCategory = async ({
+const updateExpenseCategory = async ({
   data,
   token,
   id,
   user,
   setLoading,
   setErrorAxios,
-  productCategoryList,
-  handleProductCategoryList,
+  expenseCategoryList,
+  handleExpenseCategoryList,
 }) => {
   try {
-    setLoading((prev) => ({ ...prev, editProductCategory: true }));
+    setLoading((prev) => ({ ...prev, editExpenseCategory: true }));
     const res = await axios({
       method: "put",
-      url: `${import.meta.env.VITE_API_URL}/product-category/${id}`,
+      url: `${import.meta.env.VITE_API_URL}/expense-category/${id}`,
       data: {
         name: data.name,
         description: data.description,
         events_history: {
-          productCategory_updated_at: {
+          expenseCategory_updated_at: {
             date: Date.now(),
             updating_user: user,
           },
@@ -100,15 +100,15 @@ const updateProductCategory = async ({
       },
       headers: { Authorization: `Bearer ${token}` },
     });
-    console.log("Res edit product category: ", res);
+    console.log("Res edit expense category: ", res);
     if (res.status === 200) {
       notify("success", res.data.message);
 
-      const productCategory = res.data.updated;
-      const updateProductCategoryList = productCategoryList.map((p) =>
-        p._id === id ? productCategory : p
+      const expenseCategory = res.data.updated;
+      const updateExpenseCategoryList = expenseCategoryList.map((p) =>
+        p._id === id ? expenseCategory : p
       );
-      handleProductCategoryList(updateProductCategoryList);
+      handleExpenseCategoryList(updateExpenseCategoryList);
     }
   } catch (error) {
     console.log(error);
@@ -125,35 +125,35 @@ const updateProductCategory = async ({
       );
     }
   } finally {
-    setLoading((prev) => ({ ...prev, editProductCategory: false }));
+    setLoading((prev) => ({ ...prev, editExpenseCategory: false }));
   }
 };
 
-const deleteProductCategory = async ({
+const deleteExpenseCategory = async ({
   id,
   token,
   setLoading,
   setErrorAxios,
   handleToggleModal,
   toggleModal,
-  productCategoryList,
-  handleProductCategoryList,
+  expenseCategoryList,
+  handleExpenseCategoryList,
 }) => {
   try {
-    setLoading((prev) => ({ ...prev, deleteProductCategory: true }));
+    setLoading((prev) => ({ ...prev, deleteExpenseCategory: true }));
     const res = await axios({
       method: "delete",
-      url: `${import.meta.env.VITE_API_URL}/product-category/${id}`,
+      url: `${import.meta.env.VITE_API_URL}/expense-category/${id}`,
       headers: { Authorization: `Bearer ${token}` },
     });
-    console.log("Res delete product category: ", res);
+    console.log("Res delete expense category: ", res);
     if ((res.status = 200)) {
       notify("success", res.data.message);
       setTimeout(() => {
-        const updateProductCategoryList = productCategoryList.filter(
+        const updateExpenseCategoryList = expenseCategoryList.filter(
           (p) => p._id !== id
         );
-        handleProductCategoryList(updateProductCategoryList);
+        handleExpenseCategoryList(updateExpenseCategoryList);
         handleToggleModal(!toggleModal);
       }, 1000);
     }
@@ -172,13 +172,13 @@ const deleteProductCategory = async ({
       );
     }
   } finally {
-    setLoading((prev) => ({ ...prev, deleteProductCategory: false }));
+    setLoading((prev) => ({ ...prev, deleteExpenseCategory: false }));
   }
 };
 
 export {
-  getProductCategoryList,
-  createProductCategory,
-  updateProductCategory,
-  deleteProductCategory,
+  getExpenseCategoryList,
+  createExpenseCategory,
+  updateExpenseCategory,
+  deleteExpenseCategory,
 };

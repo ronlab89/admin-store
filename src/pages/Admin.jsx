@@ -6,6 +6,12 @@ import { useAuthStore } from "../store/auth.store";
 import { useProductCategoryStore } from "@/store/productCategory";
 import { useToggleStore } from "@/store/toggle.store";
 import { useShallow } from "zustand/shallow";
+import PaymentMethods from "../components/admin/PaymentMethods";
+import ExpenseCategories from "../components/admin/ExpenseCategories";
+import { getPaymentMethodList } from "../utils/paymentMethods";
+import { usePaymentMethodStore } from "@/store/paymentMethod.store";
+import { getExpenseCategoryList } from "../utils/expenseCategoryMethods";
+import { useExpenseCategoryStore } from "@/store/expenseCategory.store";
 
 const Admin = () => {
   const token = useAuthStore((state) => state.token);
@@ -15,6 +21,18 @@ const Admin = () => {
   );
   const handleProductCategoryList = useProductCategoryStore(
     (state) => state.handleProductCategoryList
+  );
+  const paymentMethodList = usePaymentMethodStore(
+    (state) => state.paymentMethodList
+  );
+  const handlePaymentMethodList = usePaymentMethodStore(
+    (state) => state.handlePaymentMethodList
+  );
+  const expenseCategoryList = useExpenseCategoryStore(
+    (state) => state.expenseCategoryList
+  );
+  const handleExpenseCategoryList = useExpenseCategoryStore(
+    (state) => state.handleExpenseCategoryList
   );
   const { toggleModal, handleToggleModal, handleToggleSelect } = useToggleStore(
     useShallow((state) => ({
@@ -44,6 +62,8 @@ const Admin = () => {
 
   const content = [
     { id: "product-categories", content: <ProductCategories /> },
+    { id: "payment-methods", content: <PaymentMethods /> },
+    { id: "expense-categories", content: <ExpenseCategories /> },
   ];
 
   useEffect(() => {
@@ -53,6 +73,22 @@ const Admin = () => {
         setLoading,
         setErrorAxios,
         handleProductCategoryList,
+      });
+    }
+    if (paymentMethodList === null) {
+      getPaymentMethodList({
+        token,
+        setLoading,
+        setErrorAxios,
+        handlePaymentMethodList,
+      });
+    }
+    if (expenseCategoryList === null) {
+      getExpenseCategoryList({
+        token,
+        setLoading,
+        setErrorAxios,
+        handleExpenseCategoryList,
       });
     }
   }, []);
