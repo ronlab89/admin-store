@@ -156,10 +156,12 @@ const onSubmitRegister = async ({
 const logout = async ({
   navigate,
   resetAuth,
+  resetCustomer,
   resetMenu,
+  resetProduct,
+  resetSupplier,
   resetToggles,
   resetUser,
-  resetProduct,
 }) => {
   try {
     const res = await axios({
@@ -169,10 +171,12 @@ const logout = async ({
     });
     if (res.status === 200) {
       resetAuth();
+      resetCustomer();
       resetMenu();
+      resetProduct();
+      resetSupplier();
       resetToggles();
       resetUser();
-      resetProduct();
       navigate("/");
     }
   } catch (error) {

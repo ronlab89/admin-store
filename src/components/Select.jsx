@@ -1,7 +1,7 @@
 import { useShallow } from "zustand/react/shallow";
 import { useToggleStore } from "@/store/toggle.store";
 
-const Select = ({ actions, id }) => {
+const Select = ({ actions, id, toggleState, setToggleState }) => {
   const {
     toggleSelect,
     handleToggleSelect,
@@ -56,6 +56,12 @@ const Select = ({ actions, id }) => {
                 ? openModal(action.type, action.data)
                 : action.func === "modalDelete"
                 ? openModalDelete(action.type, action.data)
+                : action.func === "isEdit"
+                ? setToggleState({
+                    status: !toggleState.status,
+                    id: action.data._id,
+                    data: action.data,
+                  })
                 : avoid;
             }}
             role="menuitem"

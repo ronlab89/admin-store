@@ -69,8 +69,8 @@ const InputText = forwardRef(
             autoComplete="off"
             className={`${
               type === "checkbox"
-                ? "w-4 h-4 text-teal-600 bg-slate-100 border-slate-300 rounded focus:ring-teal-500 dark:focus:ring-teal-600 dark:ring-offset-slate-800 focus:ring-2 dark:bg-slate-700 dark:border-slate-600"
-                : `${styles} flex pl-12 h-9 w-full rounded-md border border-slate-100 dark:border-slate-900 border-input ${
+                ? "w-4 h-4 text-teal-600 bg-slate-100 border-slate-300 rounded-[.5rem] focus:ring-teal-500 dark:focus:ring-teal-600 dark:ring-offset-slate-800 focus:ring-2 dark:bg-slate-700 dark:border-slate-600"
+                : `${styles} flex pl-12 h-9 w-full rounded-[.5rem] border border-slate-100 dark:border-slate-900 border-input ${
                     mode === "login"
                       ? "bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400"
                       : "bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300"

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { notify } from "./alertNotify";
 
 const getProductList = async ({ setLoading, token, handleProductList }) => {
   try {
@@ -15,6 +16,7 @@ const getProductList = async ({ setLoading, token, handleProductList }) => {
     }
   } catch (error) {
     console.log("error: ", error);
+    notify("error", error.response.data.error);
   } finally {
     setLoading((prev) => ({ ...prev, products: false }));
   }

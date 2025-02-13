@@ -8,6 +8,8 @@ import { useUserStore } from "@/store/user.store";
 import { logout } from "@/utils/authMethods";
 import User from "../../icons/User";
 import { useProductStore } from "../../store/product.store";
+import { useCustomerStore } from "../../store/customer.store";
+import { useSupplierStore } from "../../store/supplier.store";
 
 const LinkMenu = lazy(() => import("@/components/navs/LinkMenu"));
 
@@ -21,6 +23,8 @@ const UserDropdown = () => {
   const resetUser = useUserStore((state) => state.resetUser);
   const resetMenu = useMenuStore((state) => state.resetMenu);
   const resetProduct = useProductStore((state) => state.resetProduct);
+  const resetCustomer = useCustomerStore((state) => state.resetCustomer);
+  const resetSupplier = useSupplierStore((state) => state.resetSupplier);
   const {
     toggleDrop,
     toggleModalSide,
@@ -86,11 +90,11 @@ const UserDropdown = () => {
       {isSubMenuOpen && (
         <div
           id="submenu"
-          className={`bg-slate-200 dark:bg-slate-800 flex flex-col content-between font-poppins rounded-b-[20px] shadow dark:shadow-lg w-[240px] h-[50vh] dark:divide-gray-700 absolute top-[30px] right-[0px] z-[1000]`}
+          className={`bg-slate-200 dark:bg-slate-800 flex flex-col content-between rounded-b-[20px] shadow dark:shadow-lg w-[240px] h-[50vh] absolute top-[30px] right-[0px] z-[1000]`}
           role="menu" // Indica que es un menú
           aria-labelledby="avatarButton"
         >
-          <div className="px-4 py-3 text-xs text-slate-900 dark:text-slate-100">
+          <div className="px-4 py-3 text-xs text-slate-900 dark:text-slate-100 border-b-2 border-slate-100 dark:border-slate-900">
             <div>{user.name}</div>
             <div className="truncate">{user.email}</div>
           </div>
@@ -108,7 +112,18 @@ const UserDropdown = () => {
               <LinkMenu text={"Perfil"} route={"#"} id={"profile"} />
             </li>
             <li>
-              <LinkMenu text={"Configuración"} route={"#"} id={"settings"} />
+              <LinkMenu
+                text={"Administración"}
+                route={"/administracion"}
+                id={"admin"}
+              />
+            </li>
+            <li>
+              <LinkMenu
+                text={"Configuración"}
+                route={"/configuracion"}
+                id={"settings"}
+              />
             </li>
           </ul>
           <div
@@ -117,10 +132,12 @@ const UserDropdown = () => {
               logout({
                 navigate,
                 resetAuth,
+                resetCustomer,
                 resetMenu,
+                resetProduct,
+                resetSupplier,
                 resetToggles,
                 resetUser,
-                resetProduct,
               });
               handleToggleDrop(!toggleDrop);
             }}

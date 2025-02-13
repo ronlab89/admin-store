@@ -11,6 +11,8 @@ import { useSupplierStore } from "@/store/supplier.store";
 import { deleteSupplier } from "../../utils/supplierMethods";
 import { deleteCustomer } from "../../utils/customerMethods";
 import { useCustomerStore } from "@/store/customer.store";
+import { deleteProductCategory } from "../../utils/productCategoryMethods";
+import { useProductCategoryStore } from "@/store/productCategory";
 
 const Delete = () => {
   const token = useAuthStore((state) => state.token);
@@ -32,6 +34,12 @@ const Delete = () => {
   const customerList = useCustomerStore((state) => state.customerList);
   const handleCustomerList = useCustomerStore(
     (state) => state.handleCustomerList
+  );
+  const productCategoryList = useProductCategoryStore(
+    (state) => state.productCategoryList
+  );
+  const handleProductCategoryList = useProductCategoryStore(
+    (state) => state.handleProductCategoryList
   );
 
   const [loading, setLoading] = useState({});
@@ -74,6 +82,18 @@ const Delete = () => {
         handleCustomerList,
       });
     }
+    if (modalType === "delete-product-category") {
+      deleteProductCategory({
+        id: data._id,
+        token,
+        setLoading,
+        setErrorAxios,
+        handleToggleModal: handleToggleModalDelete,
+        toggleModal: toggleModalDelete,
+        productCategoryList,
+        handleProductCategoryList,
+      });
+    }
   };
 
   return (
@@ -90,7 +110,7 @@ const Delete = () => {
         {/* <!-- Modal content --> */}
         <div className="relative bg-slate-200 rounded-[20px] shadow-md dark:bg-slate-800">
           {/* <!-- Modal header --> */}
-          <div className="flex items-center justify-between p-4 border-b-0 rounded-t dark:border-slate-800 border-slate-200">
+          <div className="flex items-center justify-between p-8 border-b-0 rounded-t dark:border-slate-800 border-slate-200">
             <span className="w-8 h-8 flex justify-center items-center bg-red-100 rounded-[20px]">
               <Trash
                 width={20}
@@ -103,7 +123,7 @@ const Delete = () => {
             </h3>
           </div>
           {/* <!-- Modal body --> */}
-          <div className="p-4 space-y-4 text-sm">
+          <div className="p-4 px-8 space-y-4 text-sm">
             <Heading type="h3" variant="" className="font-normal">
               <span>{`¿Estás seguro de que quieres eliminar ${
                 modalType === "delete"
@@ -112,6 +132,8 @@ const Delete = () => {
                   ? "a este proveedor"
                   : modalType === "delete-customer"
                   ? "a este cliente"
+                  : modalType === "delete-product-category"
+                  ? "a esta categoria de producto"
                   : ""
               }?`}</span>
             </Heading>
@@ -119,22 +141,34 @@ const Delete = () => {
               Esta acción no se puede deshacer.
             </p>
             <p className="leading-0 text-slate-800 dark:text-slate-200 flex justify-start items-center gap-2">
-              <span className="font-semibold">Nombre: </span>
+              <span className="font-medium">
+                {" "}
+                {modalType === "delete-product-category"
+                  ? "Categoria"
+                  : "Nombre"}
+                :{" "}
+              </span>
               <span>
                 {data?.name} {data?.surname}
               </span>
             </p>
             <p className="leading-0 text-slate-800 dark:text-slate-200 flex justify-start items-center gap-2">
-              <span className="font-semibold">Correo electrónico: </span>
+              <span className="font-medium">
+                {modalType === "delete-product-category"
+                  ? "Descripción:"
+                  : "Correo electrónico:"}
+              </span>
               <span>
                 {modalType === "delete" || modalType === "delete-customer"
                   ? data?.email
+                  : modalType === "delete-product-category"
+                  ? data?.description
                   : data?.contactInfo?.email}
               </span>
             </p>
           </div>
           {/* <!-- Modal footer --> */}
-          <div className="flex justify-end items-end gap-4 p-4 border-t-0 border-slate-200 rounded-b dark:border-slate-800">
+          <div className="flex justify-end items-end gap-4 p-8 border-t-0 border-slate-200 rounded-b dark:border-slate-800">
             <button
               data-modal-hide="static-modal"
               type="button"
@@ -156,7 +190,8 @@ const Delete = () => {
       </div>
       {loading.deleteUser ||
       loading.deleteSupplier ||
-      loading.deleteCustomer ? (
+      loading.deleteCustomer ||
+      loading.deleteProductCategory ? (
         <Loader type={""} />
       ) : null}
     </div>

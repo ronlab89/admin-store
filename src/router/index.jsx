@@ -5,10 +5,14 @@ import Login from "@/pages/Login";
 import NotFound from "@/pages/NotFound";
 const LayoutPrivate = lazy(() => import("@/layouts/LayoutPrivate"));
 const Dashboard = lazy(() => import("@/pages/Dashboard"));
-const Inventory = lazy(() => import("../pages/Inventory"));
-const Suppliers = lazy(() => import("../pages/Suppliers"));
-const Customers = lazy(() => import("../pages/Customers"));
-const Employees = lazy(() => import("../pages/Employees"));
+const Inventory = lazy(() => import("@/pages/Inventory"));
+const Suppliers = lazy(() => import("@/pages/Suppliers"));
+const Customers = lazy(() => import("@/pages/Customers"));
+const Employees = lazy(() => import("@/pages/Employees"));
+const Profile = lazy(() => import("@/pages/Profile"));
+const Admin = lazy(() => import("@/pages/Admin"));
+const Settings = lazy(() => import("@/pages/Settings"));
+const Products = lazy(() => import("@/pages/Products"));
 
 export const router = createBrowserRouter([
   {
@@ -48,6 +52,14 @@ export const router = createBrowserRouter([
         ),
       },
       {
+        path: "productos",
+        element: (
+          <Suspense fallback={""}>
+            <Products />
+          </Suspense>
+        ),
+      },
+      {
         path: "proveedores",
         element: (
           <Suspense fallback={""}>
@@ -68,6 +80,30 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={""}>
             <Employees />
+          </Suspense>
+        ),
+      },
+      {
+        path: "Perfil",
+        element: (
+          <Suspense fallback={""}>
+            <Profile />
+          </Suspense>
+        ),
+      },
+      {
+        path: "administracion",
+        element: (
+          <Suspense fallback={""}>
+            <Admin />
+          </Suspense>
+        ),
+      },
+      {
+        path: "configuracion",
+        element: (
+          <Suspense fallback={""}>
+            <Settings />
           </Suspense>
         ),
       },

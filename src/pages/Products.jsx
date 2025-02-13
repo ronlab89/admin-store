@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, useEffect, useState, Suspense } from "react";
 const DataTable = lazy(() => import("@/components/DataTable"));
 import { createColumnHelper } from "@tanstack/react-table";
 import { useShallow } from "zustand/react/shallow";
@@ -7,7 +7,6 @@ import IndeterminateCheckbox from "@/components/datatable/IndeterminateCheckbox"
 import { getProductList } from "../utils/productMethods";
 import { useAuthStore } from "../store/auth.store";
 import { useProductStore } from "../store/product.store";
-import io from "socket.io-client";
 import Loader from "@/components/Loader";
 import Details from "@/icons/Details";
 
@@ -16,8 +15,7 @@ import { formatterco, formatterus } from "@/utils/formatter";
 import moment from "moment/moment";
 import "moment/locale/es";
 
-const Inventory = () => {
-  const socket = io(`${import.meta.env.VITE_IO_URL}`);
+const Products = () => {
   const token = useAuthStore((state) => state.token);
   const productList = useProductStore((state) => state.productList);
   const handleProductList = useProductStore((state) => state.handleProductList);
@@ -40,37 +38,17 @@ const Inventory = () => {
   const [loading, setLoading] = useState({});
 
   useEffect(() => {
-    // if (productList === null) {
-    //   getProductList({ setLoading, token, handleProductList });
-    // }
-
-    socket.emit("fetchProducts"); // Solicitar productos al conectar
-    socket.on("initialProducts", (initialProducts) => {
-      console.log({ initialProducts });
-      handleProductList(initialProducts);
-    });
-
-    // Escuchar actualizaciones de stock
-    socket.on("stockUpdated", (updatedProducts) => {
-      handleProductList(updatedProducts);
-    });
-
-    // Limpiar listeners al desmontar el componente
-    return () => {
-      socket.off("initialProducts");
-      socket.off("stockUpdated");
-    };
+    if (productList === null) {
+      getProductList({ setLoading, token, handleProductList });
+    }
   }, []);
 
   const reload = () => {
-    // getOrders(
-    //   setLoading,
-    //   setErrorAxios,
-    //   handleOrdersList,
-    //   handleOrdersByStatus,
-    //   filters,
-    //   page
-    // );
+    getOrders({
+      setLoading,
+      token,
+      handleProductList,
+    });
   };
 
   const columnHelper = createColumnHelper();
@@ -106,8 +84,8 @@ const Inventory = () => {
     columnHelper.accessor("category", {
       header: "Categoria",
     }),
-    columnHelper.accessor("stock", {
-      header: "Stock",
+    columnHelper.accessor("description", {
+      header: "Description",
     }),
     columnHelper.accessor("price", {
       header: "Precio Unitario",
@@ -143,16 +121,14 @@ const Inventory = () => {
         <DataTable
           data={productList || []}
           columns={columns}
-          text={""}
+          text={"Crear"}
           reload={reload}
-          create={handleToggleModalSide}
-          boolean={toggleModalSide.status}
-          selectTypeModal={"right"}
-          sideType={"filters"}
-          filter={false}
+          create={handleToggleModal}
+          boolean={toggleModal}
+          createTypeModal={"create-product"}
         />
       </Suspense>
-      {loading.productList ? (
+      {loading.customers ? (
         <Suspense fallback={""}>
           <Loader />
         </Suspense>
@@ -161,4 +137,4 @@ const Inventory = () => {
   );
 };
 
-export default Inventory;
+export default Products;

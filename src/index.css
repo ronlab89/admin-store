@@ -33,3 +33,12 @@
     background-image: radial-gradient(#14b8a6 0.5px, #0f172a 0.5px);
     background-size: 10px 10px;
 }
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+textarea {
+  resize: none;
+  field-sizing: content;
+}
