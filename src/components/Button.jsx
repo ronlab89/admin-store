@@ -1,3 +1,4 @@
+import React from "react";
 import { useNavigate } from "react-router-dom";
 
 const Button = ({
@@ -34,8 +35,7 @@ const Button = ({
   // Variantes de diseño
   const variants = {
     primary: `
-    group bg-gradient-to-br from-teal-600 dark:from-teal-400 to-teal-400 dark:to-teal-600 
-      group-hover:from-teal-400 group-hover:to-teal-600 dark:group-hover:from-teal-400 dark:group-hover:to-teal-600
+   text-slate-100 dark:text-slate-100 border-0 !bg-teal-600 hover:!bg-teal-700 focus:ring-0 focus:outline-none focus:ring-teal-300 font-medium rounded-md text-sm px-5 py-1.5 text-center dark:!bg-teal-600 dark:hover:!bg-teal-400 dark:focus:ring-teal-800 hover:transition-colors
   `,
     secondary: `
     bg-gradient-to-br from-indigo-600 dark:from-indigo-400 to-indigo-400 dark:to-indigo-600 
@@ -43,9 +43,10 @@ const Button = ({
     text-slate-900 dark:text-slate-100 focus:ring-purple-200 dark:focus:ring-purple-800
   `,
     outline: `
-    border border-teal-600 dark:border-teal-400 
-    hover:bg-teal-400 hover:text-slate-200 dark:hover:bg-teal-400 dark:hover:text-slate-800 
-    text-teal-600 dark:text-teal-400 focus:ring-teal-200 dark:focus:ring-teal-800
+    border border-slate-800 dark:border-slate-200
+    hover:border-teal-600 dark:hover:border-teal-400
+    hover:text-teal-600 dark:hover:text-teal-400 
+    text-slate-800 dark:text-slate-200 focus:ring-teal-200 dark:focus:ring-teal-800
   `,
     dashed: `
     border border-dashed border-teal-600 dark:border-teal-400 
@@ -53,7 +54,7 @@ const Button = ({
     text-teal-600 dark:text-teal-400 focus:ring-teal-200 dark:focus:ring-teal-800
   `,
     cancel: `
-    text-slate-800 border-0 focus:outline-none !bg-slate-100 rounded-md border-slate-100 hover:!bg-slate-300 hover:text-slate-700 focus:z-10 focus:ring-0 focus:ring-gray-100 dark:focus:ring-gray-700 dark:!bg-slate-900 dark:text-slate-200 dark:border-slate-800 dark:hover:text-slate-200 dark:hover:!bg-slate-700 hover:transition-colors`,
+    text-slate-800 border-0 focus:outline-none !bg-slate-100 rounded-md border-slate-100 hover:!bg-slate-300 hover:text-slate-700 text-sm focus:z-10 focus:ring-0 focus:ring-gray-100 dark:focus:ring-gray-700 dark:!bg-slate-900 dark:text-slate-200 dark:border-slate-800 dark:hover:text-slate-200 dark:hover:!bg-slate-700 hover:transition-colors`,
     danger: `text-slate-100 dark:text-slate-200 border-0 !bg-red-500 hover:!bg-red-600 focus:ring-0 focus:outline-none focus:ring-red-300 font-medium rounded-md text-sm px-5 py-1.5 text-center dark:!bg-red-600 dark:hover:!bg-red-400 dark:focus:ring-red-800 hover:transition-colors`,
   };
 
@@ -71,7 +72,7 @@ const Button = ({
   ${variants[variant]} 
   ${mode === "form" ? modeStyles.form : ""} 
   ${styles}
-`;
+`.trim();
 
   // Renderizar ícono
   const renderIcon = () => {

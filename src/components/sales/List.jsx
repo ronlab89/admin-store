@@ -1,56 +1,55 @@
-import React, { Suspense, useEffect, useState } from "react";
-import DataTable from "@/components/DataTable";
+import { lazy, useEffect, useState, Suspense } from "react";
+const DataTable = lazy(() => import("@/components/DataTable"));
 import { createColumnHelper } from "@tanstack/react-table";
-import { useShallow } from "zustand/shallow";
-import { formatterco } from "@/utils/formatter";
-import { useAuthStore } from "../store/auth.store";
+import { useShallow } from "zustand/react/shallow";
 import { useToggleStore } from "@/store/toggle.store";
+import IndeterminateCheckbox from "@/components/datatable/IndeterminateCheckbox";
+import { useAuthStore } from "@/store/auth.store";
+import { useSaleStore } from "@/store/sale.store";
+import Loader from "@/components/Loader";
 import Dots from "@/icons/Dots";
 import Select from "@/components/Select";
-import Loader from "@/components/Loader";
 
-import IndeterminateCheckbox from "@/components/datatable/IndeterminateCheckbox";
+import { formatterco, formatterus } from "@/utils/formatter";
+import { useSupplierStore } from "@/store/supplier.store";
+import { getSaleList } from "@/utils/saleMethods";
+
 import moment from "moment/moment";
 import "moment/locale/es";
-import { useCustomerStore } from "@/store/customer.store";
-import { getCustomerList } from "../utils/customerMethods";
 
-const Customers = () => {
+const List = () => {
   const token = useAuthStore((state) => state.token);
-  const user = useAuthStore((state) => state.user);
-  const customerList = useCustomerStore((state) => state.customerList);
-  const handleCustomerList = useCustomerStore(
-    (state) => state.handleCustomerList
-  );
-  const { toggleModal, handleToggleModal, handleToggleSelect } = useToggleStore(
+  const saleList = useSaleStore((state) => state.saleList);
+  const handleSaleList = useSaleStore((state) => state.handleSaleList);
+  const {
+    toggleModalSide,
+    handleModalType,
+    toggleModal,
+    handleToggleModal,
+    handleToggleModalSide,
+    handleToggleSelect,
+  } = useToggleStore(
     useShallow((state) => ({
+      toggleModalSide: state.toggleModalSide,
+      handleModalType: state.handleModalType,
       toggleModal: state.toggleModal,
       handleToggleModal: state.handleToggleModal,
+      handleToggleModalSide: state.handleToggleModalSide,
       handleToggleSelect: state.handleToggleSelect,
     }))
   );
 
   const [loading, setLoading] = useState({});
-  const [errorAxios, setErrorAxios] = useState(null);
+  const [errorAxios, setErrorAxios] = useState({});
 
   useEffect(() => {
-    if (customerList === null) {
-      getCustomerList({
-        setLoading,
-        token,
-        setErrorAxios,
-        handleCustomerList,
-      });
+    if (saleList === null) {
+      getSaleList({ setLoading, token, handleSaleList });
     }
   }, []);
 
   const reload = () => {
-    getCustomerList({
-      setLoading,
-      token,
-      setErrorAxios,
-      handleCustomerList,
-    });
+    getSaleList({ setLoading, token, handleSaleList });
   };
 
   const columnHelper = createColumnHelper();
@@ -80,28 +79,25 @@ const Customers = () => {
         </div>
       ),
     },
-    columnHelper.accessor("name", {
+    columnHelper.accessor("customer", {
       header: "Cliente",
-      cell: ({ row }) => (
-        <span className="w-full flex justify-center items-center gap-2">
-          <span>{row.original.name}</span>
-          <span>{row.original.surname}</span>
-        </span>
-      ),
     }),
-    columnHelper.accessor("email", {
-      header: "Correo Electrónico",
+    columnHelper.accessor("payment_method", {
+      header: "Metodo de pago",
     }),
-    columnHelper.accessor("phone", {
-      header: "Teléfono",
-    }),
-    columnHelper.accessor("address.city", {
-      header: "Ciudad",
-    }),
-    columnHelper.accessor("events_history.customer_created_at", {
-      header: "Creado",
+    columnHelper.accessor("products", {
+      header: "Articulos",
       cell: ({ row }) =>
-        moment(row.original.events_history.customer_created_at).format("LLL"),
+        row.original.products.reduce((acc, curr) => acc + curr.quantity, 0),
+    }),
+    columnHelper.accessor("total_amount", {
+      header: "Total",
+      cell: ({ row }) => formatterco.format(row.original.total_amount),
+    }),
+    columnHelper.accessor("events_history.sale_created_at", {
+      header: "Fecha",
+      cell: ({ row }) =>
+        moment(row.original.events_history.sale_created_at).format("LLL"),
     }),
     columnHelper.accessor("acciones", {
       header: "",
@@ -109,7 +105,7 @@ const Customers = () => {
         <div className="flex justify-center gap-2 relative">
           <button
             onClick={() => handleToggleSelect(true, row.original._id)}
-            className="inline-flex gap-2 items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-transparent hover:bg-gray-100 dark:hover:bg-Shippingco-850 cursor-pointer hover:text-teal-600 dark:hover:text-teal-400 rounded-[.5rem] px-2 text-xs h-7 border-none"
+            className="inline-flex gap-2 items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-transparent hover:bg-gray-100 dark:hover:bg-Shippingco-850 cursor-pointer hover:text-teal-600 dark:hover:text-teal-400 rounded-md px-2 text-xs h-7 border-none"
             type="button"
             id="radix-:r48:"
           >
@@ -123,19 +119,19 @@ const Customers = () => {
                 {
                   name: "Detalles",
                   func: "modal",
-                  type: "details-customer",
+                  type: "details-sale",
                   data: row.original,
                 },
                 {
                   name: "Editar",
                   func: "modal",
-                  type: "edit-customer",
+                  type: "edit-sale",
                   data: row.original,
                 },
                 {
                   name: "Eliminar",
                   func: "modalDelete",
-                  type: "delete-customer",
+                  type: "delete-sale",
                   data: row.original,
                 },
               ]}
@@ -150,17 +146,16 @@ const Customers = () => {
   ];
 
   return (
-    <>
+    <section className="w-full h-full px-[20px] flex justify-center items-start">
       <Suspense fallback={""}>
         <DataTable
-          data={customerList || []}
+          data={saleList || []}
           columns={columns}
-          text={"Crear"}
+          text={""}
           reload={reload}
           create={handleToggleModal}
           boolean={toggleModal}
-          createTypeModal={"create-customer"}
-          filter={false}
+          createTypeModal={"create-sale"}
         />
       </Suspense>
       {loading.customers ? (
@@ -168,8 +163,8 @@ const Customers = () => {
           <Loader />
         </Suspense>
       ) : null}
-    </>
+    </section>
   );
 };
 
-export default Customers;
+export default List;

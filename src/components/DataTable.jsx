@@ -124,35 +124,38 @@ const DataTable = ({
             />
           </div>
           {/* Filters */}
-
-          <Button
-            text={"Filtros"}
-            icon={<Filter width={15} height={15} styles={""} />}
-            reverse={false}
-            onClick={() => {
-              handleModalSideType(sideType);
-              create(!boolean);
-            }}
-            styles={!filter ? "hidden" : ""}
-          />
+          {filter ? (
+            <Button
+              text={"Filtros"}
+              icon={<Filter width={15} height={15} styles={""} />}
+              reverse={false}
+              onClick={() => {
+                handleModalSideType(sideType);
+                create(!boolean);
+              }}
+              mode={"default"}
+              variant={"outline"}
+              styles={""}
+            />
+          ) : null}
         </div>
         <div className={` flex justify-between items-center gap-5 z-10`}>
           {/* Create */}
-
-          <Button
-            text={text}
-            icon={<Create width={15} height={15} styles={""} />}
-            reverse={false}
-            onClick={() => {
-              handleModalType(createTypeModal);
-              create(!boolean);
-            }}
-            styles={
-              text === undefined || text === "" || text !== "Crear"
-                ? "hidden"
-                : ""
-            }
-          />
+          {text === "Crear" ? (
+            <Button
+              text={text}
+              icon={<Create width={15} height={15} styles={"ml-2"} />}
+              iconPosition={"right"}
+              reverse={false}
+              onClick={() => {
+                handleModalType(createTypeModal);
+                create(!boolean);
+              }}
+              mode={"default"}
+              variant={"outline"}
+              styles={""}
+            />
+          ) : null}
 
           {/* Batch */}
           <div
@@ -163,39 +166,18 @@ const DataTable = ({
             className={`relative ${
               text === undefined || text === "" ? "" : "hidden"
             }`}
-          >
-            {/* <Button
-              text={"Procesar lote"}
-              icon={<Batch width={15} height={15} styles={""} />}
-              reverse={false}
-              url={"/inicio/lote-ordenes"}
-              onClick={() => {
-                handleLinkId("order-details");
-                handleSubLinkId("");
-              }}
-              // disabled={ordersBatch.length <= 1 ? true : false}
-            /> */}
-
-            {/* <Popover
-              id={"popover-top"}
-              title={""}
-              content={
-                ordersBatch.length <= 1
-                  ? "Debes seleccionar 2 o mas órdenes para procesarlas en lote!"
-                  : "Haz clic para procesar el lote seleccionado!"
-              }
-              styles={`top-[35px] left-0 ${
-                ordersBatch.length <= 1 ? "w-[140px]" : "w-[130px]"
-              }`}
-            /> */}
-          </div>
+          ></div>
           {/* Reload */}
 
           <Button
             text={"Recargar"}
-            icon={<Reload width={14} height={14} styles={""} />}
+            icon={<Reload width={14} height={14} styles={"ml-2"} />}
+            iconPosition={"right"}
             reverse={false}
             onClick={reload}
+            mode={"default"}
+            variant={"outline"}
+            styles={""}
           />
         </div>
       </article>

@@ -21,6 +21,17 @@
     font-display:swap;
   }
 
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  html {
+    background-color: #f1f5f9;
+  }
+  .dark html {
+    background-color: #0f172b;
+  }
+
 .pattern {
     background-color: #f1f5f9;
     opacity: 0.8;
@@ -34,11 +45,4 @@
     background-size: 10px 10px;
 }
 
-::-webkit-scrollbar {
-  display: none;
-}
 
-textarea {
-  resize: none;
-  field-sizing: content;
-}

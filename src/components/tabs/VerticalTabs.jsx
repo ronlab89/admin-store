@@ -210,7 +210,6 @@ const VerticalTabs = ({ data, list, icon, type, createMethod, editMethod }) => {
                 type={"submit"}
                 styles={"cursor-pointer mt-5"}
                 mode={"form"}
-                variant={"primary"}
               />
             </form>
           </div>

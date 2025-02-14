@@ -163,12 +163,12 @@ const Delete = () => {
         toggleModalDelete ? "" : "hidden"
       } overflow-hidden fixed top-0 right-0 left-0 mx-auto z-50 flex justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full`}
     >
-      <div className="relative p-4 w-full max-w-2xl max-h-full">
+      <div className="relative p-0 w-full max-w-2xl max-h-full">
         {/* <!-- Modal content --> */}
-        <div className="relative bg-slate-200 rounded-[20px] shadow-md dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700">
+        <div className="relative bg-slate-200 rounded-[.5rem] shadow-md dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700">
           {/* <!-- Modal header --> */}
-          <div className="flex items-center justify-between p-8 border-b-0 rounded-t dark:border-slate-800 border-slate-200">
-            <span className="w-8 h-8 flex justify-center items-center bg-red-100 rounded-[20px]">
+          <div className="flex items-center justify-between p-8 border-b-0 rounded-t-[.5rem] dark:border-slate-800 border-slate-200">
+            <span className="w-10 h-10 flex justify-center items-center bg-red-100 rounded-[.5rem]">
               <Trash
                 width={20}
                 height={20}
@@ -184,19 +184,19 @@ const Delete = () => {
             <Heading type="h3" variant="" className="font-normal">
               <span>{`¿Estás seguro de que quieres eliminar ${
                 modalType === "delete"
-                  ? "a este empleado"
+                  ? "este empleado"
                   : modalType === "delete-product"
-                  ? "a este producto"
+                  ? "este producto"
                   : modalType === "delete-supplier"
-                  ? "a este proveedor"
+                  ? "este proveedor"
                   : modalType === "delete-customer"
-                  ? "a este cliente"
+                  ? "este cliente"
                   : modalType === "delete-product-category"
-                  ? "a esta categoria de producto"
+                  ? "esta categoria de producto"
                   : modalType === "delete-payment-method"
-                  ? "a este método de pago"
+                  ? "este método de pago"
                   : modalType === "delete-expense-category"
-                  ? "a esta categoria de gastos"
+                  ? "esta categoria de gastos"
                   : ""
               }?`}</span>
             </Heading>
@@ -240,7 +240,7 @@ const Delete = () => {
             </p>
           </div>
           {/* <!-- Modal footer --> */}
-          <div className="flex justify-end items-end gap-4 p-8 border-t-0 border-slate-200 rounded-b dark:border-slate-800">
+          <div className="flex justify-end items-end gap-4 p-8 border-t-0 border-slate-200 rounded-b-[.5rem] dark:border-slate-800">
             <Button
               text={"Cancelar"}
               onClick={() => handleToggleModalDelete(!toggleModalDelete)}

@@ -9,6 +9,7 @@ const CreateEditEmployee = lazy(() => import("../forms/CreateEditEmployee"));
 const CreateEditSupplier = lazy(() => import("../forms/CreateEditSupplier"));
 const CreateEditCustomer = lazy(() => import("../forms/CreateEditCustomer"));
 const CreateEditProduct = lazy(() => import("../forms/CreateEditProduct"));
+const CreateEditSale = lazy(() => import("../forms/CreateEditSale"));
 
 const Modal = () => {
   const { toggleSidebar, toggleModal, handleToggleModal, modalType } =
@@ -67,6 +68,10 @@ const Modal = () => {
       ) : modalType === "edit-customer" || modalType === "create-customer" ? (
         <Suspense fallback={""}>
           <CreateEditCustomer />
+        </Suspense>
+      ) : modalType === "edit-sale" || modalType === "create-sale" ? (
+        <Suspense fallback={""}>
+          <CreateEditSale />
         </Suspense>
       ) : modalType === "login" ? (
         <Suspense fallback={""}>

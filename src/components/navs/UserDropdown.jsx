@@ -20,6 +20,11 @@ const UserDropdown = () => {
       resetAuth: state.resetAuth,
     }))
   );
+  const { handleDataProfile } = useUserStore(
+    useShallow((state) => ({
+      handleDataProfile: state.handleDataProfile,
+    }))
+  );
   const resetUser = useUserStore((state) => state.resetUser);
   const resetMenu = useMenuStore((state) => state.resetMenu);
   const resetProduct = useProductStore((state) => state.resetProduct);
@@ -104,12 +109,10 @@ const UserDropdown = () => {
           >
             <li
               onClick={() => {
-                handleToggleDrop(!toggleDrop);
-                handleModalSideType("profile");
-                handleToggleModalSide(!toggleModalSide.status, "right");
+                handleDataProfile({ ...user, type: "loggued" });
               }}
             >
-              <LinkMenu text={"Perfil"} route={"#"} id={"profile"} />
+              <LinkMenu text={"Perfil"} route={"/perfil"} id={"profile"} />
             </li>
             <li>
               <LinkMenu

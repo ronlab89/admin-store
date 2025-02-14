@@ -108,7 +108,7 @@ const Employees = () => {
               actions={[
                 {
                   name: "Perfil",
-                  func: "modal",
+                  func: "url",
                   type: "profile",
                   data: row.original,
                 },

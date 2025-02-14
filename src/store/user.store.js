@@ -3,6 +3,7 @@ import { persist } from "zustand/middleware";
 
 const initialState = {
   userList: null,
+  dataProfile: null,
 };
 
 // Función para resetear estado
@@ -19,6 +20,11 @@ export const useUserStore = create(
         set((state) => ({
           userList: data,
         })),
+      handleDataProfile: (data) =>
+        set((state) => ({
+          dataProfile: data,
+        })),
+
       resetUser: () => resetState(set),
     }),
     {

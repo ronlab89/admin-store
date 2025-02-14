@@ -44,7 +44,7 @@ const InputSelect = forwardRef(
           name={name}
           ref={ref}
         >
-          <option defaultValue={defaultOption} value={defaultOption} disabled>
+          <option value="" disabled>
             {defaultOption}
           </option>
           {options.map((opt, index) => (

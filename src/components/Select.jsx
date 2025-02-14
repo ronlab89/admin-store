@@ -1,5 +1,7 @@
 import { useShallow } from "zustand/react/shallow";
 import { useToggleStore } from "@/store/toggle.store";
+import { useNavigate } from "react-router-dom";
+import { useUserStore } from "@/store/user.store";
 
 const Select = ({ actions, id, toggleState, setToggleState }) => {
   const {
@@ -23,6 +25,8 @@ const Select = ({ actions, id, toggleState, setToggleState }) => {
       handleData: state.handleData,
     }))
   );
+  const handleDataProfile = useUserStore((state) => state.handleDataProfile);
+  const navigate = useNavigate();
 
   const openModal = (type, data) => {
     handleToggleModal(!toggleModal);
@@ -52,17 +56,29 @@ const Select = ({ actions, id, toggleState, setToggleState }) => {
           <div
             key={index}
             onClick={() => {
-              action.func === "modal"
-                ? openModal(action.type, action.data)
-                : action.func === "modalDelete"
-                ? openModalDelete(action.type, action.data)
-                : action.func === "isEdit"
-                ? setToggleState({
-                    status: !toggleState.status,
-                    id: action.data._id,
-                    data: action.data,
-                  })
-                : avoid;
+              if (action.func === "url") {
+                navigate("/perfil");
+                handleDataProfile(action.data);
+                handleToggleSelect(false, null);
+                return;
+              }
+              if (action.func === "modal") {
+                openModal(action.type, action.data);
+                return;
+              }
+              if (action.func === "modalDelete") {
+                openModalDelete(action.type, action.data);
+                return;
+              }
+              if (action.func === "isEdit") {
+                setToggleState({
+                  status: !toggleState.status,
+                  id: action.data._id,
+                  data: action.data,
+                });
+                return;
+              }
+              avoid;
             }}
             role="menuitem"
             className="relative cursor-pointer flex select-none items-center rounded-[.5rem] px-2 py-1 text-xs outline-none transition-colors hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-teal-600 dark:hover:text-teal-400 data-[disabled]:pointer-events-none data-[disabled]:opacity-50"

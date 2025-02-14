@@ -116,6 +116,13 @@ const onSubmitRegister = async ({
         name: data.name,
         surname: data.surname,
         email: data.email,
+        phone: data.phone,
+        address: {
+          addressline: data.addressline,
+          city: data.city,
+          province: data.province,
+          country: data.country,
+        },
         password: data.password,
         repassword: data.repassword,
         role: data.role,
@@ -199,6 +206,9 @@ const onSubmitEdit = async ({
   handleUserList,
   handleToggleModal,
   toggleModal,
+  type,
+  handleuser,
+  handleDataProfile,
 }) => {
   try {
     setLoading((prev) => ({ ...prev, editUser: true }));
@@ -209,6 +219,13 @@ const onSubmitEdit = async ({
         name: data.name,
         surname: data.surname,
         email: data.email,
+        phone: data.phone,
+        address: {
+          addressline: data.addressline,
+          city: data.city,
+          province: data.province,
+          country: data.country,
+        },
         role: data.role,
         events_history: {
           user_edited_at: {
@@ -224,6 +241,19 @@ const onSubmitEdit = async ({
       notify("success", res.data.message);
       setTimeout(() => {
         const user = res.data.updated;
+        if (type === "profile") {
+          handleuser({
+            id: user._id,
+            name: user.name,
+            surname: user.surname,
+            email: user.email,
+            phone: user.phone,
+            address: user.address,
+            role: user.role,
+            events_history: user.events_history,
+          });
+          handleDataProfile(user);
+        }
         const updateUserList = userList.map((u) => (u._id === id ? user : u));
         handleUserList(updateUserList);
         handleToggleModal(!toggleModal);

@@ -14,16 +14,23 @@ import { useUserStore } from "@/store/user.store";
 import Loader from "@/components/Loader";
 import Letter from "@/icons/Letter";
 import Email from "@/icons/Email";
+import Location from "@/icons/Location";
+import Map from "@/icons/Map";
+import City from "@/icons/City";
+import Phone from "@/icons/Phone";
 
 const CreateEditEmployee = () => {
   const token = useAuthStore((state) => state.token);
   const user = useAuthStore((state) => state.user);
+  const handleuser = useAuthStore((state) => state.handleuser);
   const toggleModal = useToggleStore((state) => state.toggleModal);
   const handleToggleModal = useToggleStore((state) => state.handleToggleModal);
   const modalType = useToggleStore((state) => state.modalType);
   const data = useToggleStore((state) => state.data);
   const userList = useUserStore((state) => state.userList);
   const handleUserList = useUserStore((state) => state.handleUserList);
+  const handleDataProfile = useUserStore((state) => state.handleDataProfile);
+
   const [loading, setLoading] = useState({});
   const [errorAxios, setErrorAxios] = useState(null);
   const {
@@ -36,6 +43,11 @@ const CreateEditEmployee = () => {
       name: "",
       surname: "",
       email: "",
+      phone: "",
+      addressline: "",
+      city: "",
+      province: "",
+      country: "",
       role: "",
       password: "",
       repassword: "",
@@ -58,11 +70,31 @@ const CreateEditEmployee = () => {
     });
   };
 
-  const onEdit = ({ name, surname, email, role }) => {
+  const onEdit = ({
+    name,
+    surname,
+    email,
+    phone,
+    addressline,
+    city,
+    province,
+    country,
+    role,
+  }) => {
     onSubmitEdit({
-      data: { name, surname, email, role },
+      data: {
+        name,
+        surname,
+        email,
+        phone,
+        addressline,
+        city,
+        province,
+        country,
+        role,
+      },
       token,
-      id: data._id,
+      id: data._id ? data._id : data.id,
       user: user.id,
       setLoading,
       setErrorAxios,
@@ -70,6 +102,9 @@ const CreateEditEmployee = () => {
       handleUserList,
       handleToggleModal,
       toggleModal,
+      type: data.type,
+      handleuser,
+      handleDataProfile,
     });
   };
 
@@ -79,6 +114,11 @@ const CreateEditEmployee = () => {
         name: "",
         surname: "",
         email: "",
+        phone: "",
+        addressline: "",
+        city: "",
+        province: "",
+        country: "",
         role: "",
         password: "",
         repassword: "",
@@ -93,14 +133,14 @@ const CreateEditEmployee = () => {
           {modalType === "edit" ? "Actualizar empleado" : "Registrar empleado"}
         </span>
       </Heading>
-      <article className="w-full h-full pt-20 px-[40px]">
+      <article className="w-full h-full pt-5 px-[40px]">
         <form
           onSubmit={
             modalType === "edit"
               ? handleSubmit(onEdit)
               : handleSubmit(onRegister)
           }
-          className="grid grid-cols-1 md:grid-cols-2 place-items-center gap-10"
+          className="grid grid-cols-1 md:grid-cols-2 place-items-center gap-4"
           noValidate
         >
           <div className="w-full">
@@ -160,25 +200,23 @@ const CreateEditEmployee = () => {
             />
           </div>
           <div className="w-full">
-            <InputSelect
-              icon={""}
-              id={"role"}
-              name={"role"}
-              label={"Cargo"}
-              defaultOption={
-                modalType === "edit" ? data.role : "Seleccione el role"
+            <InputText
+              icon={<Phone width={16} height={16} styles={""} />}
+              type={"text"}
+              text={"Teléfono"}
+              placeholder={
+                modalType === "edit-customer"
+                  ? data.phone
+                  : "Escribe el teléfono"
               }
-              options={[
-                { value: "administrador", name: "Administrador" },
-                { value: "supervisor", name: "Supervisor" },
-                { value: "empleado", name: "Empleado" },
-              ]}
-              error={errors.role && "error-select"}
-              {...register("role", {
+              name={"phone"}
+              id={"phone"}
+              error={errors.phone && "error-input"}
+              {...register("phone", {
                 required,
                 validate: validateTrim,
               })}
-              errorId={errors.role}
+              errorId={errors.phone}
             />
           </div>
           {modalType === "edit" ? null : (
@@ -217,6 +255,109 @@ const CreateEditEmployee = () => {
               </div>
             </>
           )}
+          <div className="w-full">
+            <InputSelect
+              icon={""}
+              id={"role"}
+              name={"role"}
+              label={"Cargo"}
+              divStyles={"min-w-[100%]"}
+              defaultOption={
+                modalType === "edit" ? data.role : "Seleccione el role"
+              }
+              options={[
+                { value: "administrador", name: "Administrador" },
+                { value: "supervisor", name: "Supervisor" },
+                { value: "empleado", name: "Empleado" },
+              ]}
+              error={errors.role && "error-select"}
+              {...register("role", {
+                required,
+                validate: validateTrim,
+              })}
+              errorId={errors.role}
+            />
+          </div>
+          <div className="w-full">
+            <InputText
+              icon={<Location width={16} height={16} styles={""} />}
+              type={"text"}
+              text={"Dirección 1"}
+              placeholder={
+                modalType === "edit-customer"
+                  ? data.address.addressline
+                  : "Escribe linea de dirección"
+              }
+              name={"addressline"}
+              id={"addressline"}
+              error={errors.addressline && "error-input"}
+              {...register("addressline", {
+                required,
+                validate: validateTrim,
+              })}
+              errorId={errors.addressline}
+            />
+          </div>
+          <div className="w-full">
+            <InputText
+              icon={<City width={16} height={16} styles={""} />}
+              type={"text"}
+              text={"Ciudad"}
+              placeholder={
+                modalType === "edit-customer"
+                  ? data.address.city
+                  : "Escribe la ciudad"
+              }
+              name={"city"}
+              id={"city"}
+              error={errors.city && "error-input"}
+              {...register("city", {
+                required,
+                validate: validateTrim,
+              })}
+              errorId={errors.city}
+            />
+          </div>
+          <div className="w-full">
+            <InputText
+              icon={<Map width={16} height={16} styles={""} />}
+              type={"text"}
+              text={"Estado"}
+              placeholder={
+                modalType === "edit-customer"
+                  ? data.address.province
+                  : "Escribe el estado"
+              }
+              name={"province"}
+              id={"province"}
+              error={errors.province && "error-input"}
+              {...register("province", {
+                required,
+                validate: validateTrim,
+              })}
+              errorId={errors.province}
+            />
+          </div>
+          <div className="w-full">
+            <InputText
+              icon={<Map width={16} height={16} styles={""} />}
+              type={"text"}
+              text={"País"}
+              placeholder={
+                modalType === "edit-customer"
+                  ? data.address.country
+                  : "Escribe el país"
+              }
+              name={"country"}
+              id={"country"}
+              error={errors.country && "error-input"}
+              {...register("country", {
+                required,
+                validate: validateTrim,
+              })}
+              errorId={errors.country}
+            />
+          </div>
           <div className="w-full col-span-1 md:col-span-2 flex justify-start items-start gap-10">
             <Button
               text={modalType === "edit" ? "Actualizar" : "Registrar"}
@@ -224,6 +365,7 @@ const CreateEditEmployee = () => {
               type={"submit"}
               styles={"cursor-pointer"}
               mode={"form"}
+              variant={""}
             />
           </div>
         </form>
