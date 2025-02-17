@@ -166,6 +166,7 @@ const logout = async ({
   navigate,
   resetAuth,
   resetCustomer,
+  resetDashboard,
   resetExpenseCategory,
   resetMenu,
   resetPaymentMethod,
@@ -184,6 +185,7 @@ const logout = async ({
     if (res.status === 200) {
       resetAuth();
       resetCustomer();
+      resetDashboard();
       resetExpenseCategory();
       resetMenu();
       resetPaymentMethod();

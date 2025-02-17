@@ -13,6 +13,7 @@ import { useExpenseCategoryStore } from "@/store/expenseCategory.store";
 import { useSaleStore } from "@/store/sale.store";
 import { useProductCategoryStore } from "@/store/productCategory.store";
 import { usePurchaseStore } from "@/store/purchase.store";
+import { useDashboardStore } from "@/store/dashboard.store";
 
 import { logout } from "@/utils/authMethods";
 
@@ -42,6 +43,7 @@ const UserDropdown = () => {
   const toggleDrop = useToggleStore((state) => state.toggleDrop);
   const handleToggleDrop = useToggleStore((state) => state.handleToggleDrop);
   const resetToggles = useToggleStore((state) => state.resetToggles);
+  const resetDashboard = useDashboardStore((state) => state.resetDashboard);
 
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
 
@@ -124,6 +126,7 @@ const UserDropdown = () => {
                 navigate,
                 resetAuth,
                 resetCustomer,
+                resetDashboard,
                 resetExpenseCategory,
                 resetMenu,
                 resetPaymentMethod,

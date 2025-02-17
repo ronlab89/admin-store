@@ -1,12 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Chart from "react-apexcharts";
+import { useShallow } from "zustand/shallow";
+import { useDashboardStore } from "@/store/dashboard.store";
 
 const ChartColumn = () => {
+  const { topCustomers } = useDashboardStore(
+    useShallow((state) => ({
+      topCustomers: state.topCustomers,
+    }))
+  );
   const [state, setState] = useState({
     series: [
       {
-        name: "Servings",
-        data: [44, 55, 41, 67, 22, 43, 21, 33, 45, 31, 87, 65, 35],
+        name: "Compras",
+        data: topCustomers
+          ? topCustomers.map((customer) => customer.count)
+          : [],
       },
     ],
     options: {
@@ -22,7 +31,7 @@ const ChartColumn = () => {
                 color: "#fff",
                 background: "#775DD0",
               },
-              text: "Bananas are good",
+              text: "Clientes con más compras",
             },
           },
         ],
@@ -52,26 +61,14 @@ const ChartColumn = () => {
         labels: {
           rotate: -45,
         },
-        categories: [
-          "Apples",
-          "Oranges",
-          "Strawberries",
-          "Pineapples",
-          "Mangoes",
-          "Bananas",
-          "Blackberries",
-          "Pears",
-          "Watermelons",
-          "Cherries",
-          "Pomegranates",
-          "Tangerines",
-          "Papayas",
-        ],
+        data: topCustomers
+          ? topCustomers.map((customer) => customer.customer.name)
+          : [],
         tickPlacement: "on",
       },
       yaxis: {
         title: {
-          text: "Servings",
+          text: "Compras",
         },
       },
       fill: {

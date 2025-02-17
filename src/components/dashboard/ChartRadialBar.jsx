@@ -1,9 +1,23 @@
 import { useState } from "react";
 import Chart from "react-apexcharts";
+import { useShallow } from "zustand/shallow";
+import { useDashboardStore } from "@/store/dashboard.store";
 
-const ChartRadialBar = () => {
+const ChartRadialBar = ({ view }) => {
+  const { topProductsQuantity, productvs, profilevs } = useDashboardStore(
+    useShallow((state) => ({
+      topProductsQuantity: state.topProductsQuantity,
+      productvs: state.productvs,
+      profilevs: state.profilevs,
+    }))
+  );
+  const most = productvs?.most?.quantity;
+  const least = productvs?.least?.quantity;
+  const profileMost = profilevs?.most?.quantity;
+  const profileLeast = profilevs?.least?.quantity;
+
   const [state, setState] = useState({
-    series: [76, 67, 61, 90],
+    series: view === "dashboard" ? [most, least] : [profileMost, profileLeast],
     options: {
       chart: {
         height: 390,
@@ -32,7 +46,7 @@ const ChartRadialBar = () => {
             enabled: true,
             useSeriesColors: true,
             offsetX: -8,
-            fontSize: "16px",
+            fontSize: "14px",
             formatter: function (seriesName, opts) {
               return (
                 seriesName + ":  " + opts.w.globals.series[opts.seriesIndex]
@@ -42,7 +56,16 @@ const ChartRadialBar = () => {
         },
       },
       colors: ["#1ab7ea", "#0084ff", "#39539E", "#0077B5"],
-      labels: ["Vimeo", "Messenger", "Facebook", "LinkedIn"],
+      labels:
+        view === "dashboard"
+          ? [
+              `Más vendido, ${productvs?.most?.product?.name}`,
+              `Menos vendido, ${productvs?.least?.product?.name}`,
+            ]
+          : [
+              `Más vendido, ${profilevs?.most?.product?.name}`,
+              `Menos vendido, ${profilevs?.least?.product?.name}`,
+            ],
       responsive: [
         {
           breakpoint: 480,

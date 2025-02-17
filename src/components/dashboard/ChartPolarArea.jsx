@@ -1,13 +1,25 @@
 import { useState } from "react";
 import Chart from "react-apexcharts";
+import { useShallow } from "zustand/shallow";
+import { useDashboardStore } from "@/store/dashboard.store";
 
 const ChartPolarArea = () => {
+  const { topProductsQuantity } = useDashboardStore(
+    useShallow((state) => ({
+      topProductsQuantity: state.topProductsQuantity,
+    }))
+  );
   const [state, setState] = useState({
-    series: [14, 23, 21, 17, 15, 10, 12, 17, 21],
+    series: topProductsQuantity
+      ? topProductsQuantity.map((x) => x.quantity)
+      : [0],
     options: {
       chart: {
         type: "polarArea",
       },
+      labels: topProductsQuantity
+        ? topProductsQuantity.map((x) => x.product.name)
+        : [""],
       stroke: {
         colors: ["#fff"],
       },

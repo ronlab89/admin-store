@@ -1,8 +1,16 @@
+import { useEffect, useState } from "react";
+import { useShallow } from "zustand/shallow";
+
 import { useUserStore } from "@/store/user.store";
 import { useToggleStore } from "@/store/toggle.store";
 import { useAuthStore } from "@/store/auth.store";
+import { useDashboardStore } from "@/store/dashboard.store";
+
+import { consultDataProfile } from "@/utils/dashboardMethods";
 
 import Heading from "@/components/Heading";
+import ChartRadialBar from "@/components/dashboard/ChartRadialBar";
+import ChartLine from "@/components/dashboard/ChartLine";
 
 import User from "@/icons/User";
 import Phone from "@/icons/Phone";
@@ -15,8 +23,7 @@ import Calendar from "@/icons/Calendar";
 
 import moment from "moment/moment";
 import "moment/locale/es";
-import ChartRadialBar from "../components/dashboard/ChartRadialBar";
-import ChartLine from "../components/dashboard/ChartLine";
+import ChartArea from "../components/dashboard/ChartArea";
 
 const Profile = () => {
   const dataProfile = useUserStore((state) => state.dataProfile);
@@ -26,6 +33,31 @@ const Profile = () => {
   const handleData = useToggleStore((state) => state.handleData);
   const user = useAuthStore((state) => state.user);
   const toggleSidebar = useToggleStore((state) => state.toggleSidebar);
+  const token = useAuthStore((state) => state.token);
+  const { profileProducts, profilevs } = useDashboardStore(
+    useShallow((state) => ({
+      profileProducts: state.profileProducts,
+      profilevs: state.profilevs,
+    }))
+  );
+  const handleProfileProducts = useDashboardStore(
+    (state) => state.handleProfileProducts
+  );
+  const handleProfilevs = useDashboardStore((state) => state.handleProfilevs);
+
+  const [loading, setLoading] = useState({});
+  const [errorAxios, setErrorAxios] = useState(null);
+
+  useEffect(() => {
+    consultDataProfile({
+      setLoading,
+      token,
+      employeeId: dataProfile?.id,
+      setErrorAxios,
+      handleProfileProducts,
+      handleProfilevs,
+    });
+  }, []);
 
   return (
     <section
@@ -110,7 +142,7 @@ const Profile = () => {
             <ChartRadialBar />
           </div>
           <div className="w-full lg:h-[250px] xl:h-[350px] bg-slate-200 dark:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-[.5rem] shadow">
-            <ChartLine />
+            <ChartArea />
           </div>
         </article>
       </section>

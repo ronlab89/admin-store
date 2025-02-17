@@ -52,44 +52,46 @@ const Select = ({ actions, id, toggleState, setToggleState }) => {
       } z-[500] min-w-[4rem] min-h-[4rem] overflow-hidden rounded-md border border-slate-200 dark:border-slate-800 text-center font-poppins bg-slate-200 dark:bg-slate-800 p-1 shadow-md w-[90px]`}
       dataorientation="vertical"
     >
-      {actions.map((action, index) => {
-        return (
-          <div
-            key={index}
-            onClick={() => {
-              if (action.func === "url") {
-                navigate("/perfil");
-                handleDataProfile(action.data);
-                handleToggleSelect(false, null);
-                return;
-              }
-              if (action.func === "modal") {
-                openModal(action.type, action.data);
-                return;
-              }
-              if (action.func === "modalDelete") {
-                openModalDelete(action.type, action.data);
-                return;
-              }
-              if (action.func === "isEdit") {
-                setToggleState({
-                  status: !toggleState.status,
-                  id: action.data._id,
-                  data: action.data,
-                });
-                handleToggleSelect(false, null);
-                return;
-              }
-              avoid;
-            }}
-            role="menuitem"
-            className="relative cursor-pointer flex select-none items-center rounded-[.5rem] px-2 py-1 text-xs outline-none transition-colors hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-teal-600 dark:hover:text-teal-400 data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-            dataorientation="vertical"
-          >
-            {action.name}
-          </div>
-        );
-      })}
+      {actions
+        ? actions?.map((action, index) => {
+            return (
+              <div
+                key={index}
+                onClick={() => {
+                  if (action.func === "url") {
+                    navigate("/perfil");
+                    handleDataProfile(action.data);
+                    handleToggleSelect(false, null);
+                    return;
+                  }
+                  if (action.func === "modal") {
+                    openModal(action.type, action.data);
+                    return;
+                  }
+                  if (action.func === "modalDelete") {
+                    openModalDelete(action.type, action.data);
+                    return;
+                  }
+                  if (action.func === "isEdit") {
+                    setToggleState({
+                      status: !toggleState.status,
+                      id: action.data._id,
+                      data: action.data,
+                    });
+                    handleToggleSelect(false, null);
+                    return;
+                  }
+                  avoid;
+                }}
+                role="menuitem"
+                className="relative cursor-pointer flex select-none items-center rounded-[.5rem] px-2 py-1 text-xs outline-none transition-colors hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-teal-600 dark:hover:text-teal-400 data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+                dataorientation="vertical"
+              >
+                {action.name}
+              </div>
+            );
+          })
+        : null}
     </div>
   );
 };

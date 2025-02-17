@@ -1,11 +1,21 @@
 import { useState } from "react";
 import Chart from "react-apexcharts";
+import { useShallow } from "zustand/shallow";
+import { useDashboardStore } from "@/store/dashboard.store";
 
 const ChartBar = () => {
+  const { topSuppliers } = useDashboardStore(
+    useShallow((state) => ({
+      topSuppliers: state.topSuppliers,
+    }))
+  );
+
   const [state, setState] = useState({
     series: [
       {
-        data: [400, 430, 448, 470, 540, 580, 690, 1100, 1200, 1380],
+        data: topSuppliers
+          ? topSuppliers.map((supplier) => supplier.count)
+          : [],
       },
     ],
     options: {
@@ -24,18 +34,9 @@ const ChartBar = () => {
         enabled: false,
       },
       xaxis: {
-        categories: [
-          "South Korea",
-          "Canada",
-          "United Kingdom",
-          "Netherlands",
-          "Italy",
-          "France",
-          "Japan",
-          "United States",
-          "China",
-          "Germany",
-        ],
+        categories: topSuppliers
+          ? topSuppliers.map((supplier) => supplier.supplier.name)
+          : [],
       },
     },
   });

@@ -1,16 +1,27 @@
 import { useState } from "react";
 import Chart from "react-apexcharts";
+import { useShallow } from "zustand/shallow";
+import { useDashboardStore } from "@/store/dashboard.store";
+import moment from "moment/moment";
+import "moment/locale/es";
 
 const ChartLine = () => {
+  const { profileProducts, consultDate } = useDashboardStore(
+    useShallow((state) => ({
+      profileProducts: state.profileProducts,
+      consultDate: state.consultDate,
+    }))
+  );
+
   const [state, setState] = useState({
     series: [
       {
-        name: "High - 2013",
-        data: [28, 29, 33, 36, 32, 32, 33],
+        name: `Mas vendido - ${moment(consultDate).format("MMMM")}`,
+        data: [profileProducts?.quantity],
       },
       {
-        name: "Low - 2013",
-        data: [12, 11, 14, 18, 17, 13, 13],
+        name: `Menos vendido - ${moment(consultDate).format("MMMM")}`,
+        data: [profileProducts?.quantity],
       },
     ],
     options: {
