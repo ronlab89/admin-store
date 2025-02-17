@@ -1,5 +1,10 @@
 import { forwardRef, lazy, Suspense } from "react";
+
+import { useToggleStore } from "@/store/toggle.store";
+
 const FormErrors = lazy(() => import("./FormErrors"));
+import Eye from "@/icons/Eye";
+import EyeClosed from "@/icons/EyeClosed";
 
 const InputText = forwardRef(
   (
@@ -26,6 +31,9 @@ const InputText = forwardRef(
     },
     ref
   ) => {
+    const toggleShow = useToggleStore((state) => state.toggleShow);
+    const handleToggleShow = useToggleStore((state) => state.handleToggleShow);
+
     return (
       <div
         className={`pb-2 ${
@@ -77,6 +85,28 @@ const InputText = forwardRef(
                   } px-3 py-1 text-xs shadow-sm font-medium  placeholder:text-slate-400 dark:placeholder:text-slate-600 placeholder:font-normal focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-600 dark:focus-visible:ring-slate-400 disabled:cursor-not-allowed disabled:opacity-50`
             }`}
           />
+          <span
+            onClick={() => handleToggleShow(!toggleShow.status, id)}
+            className={`${
+              id === "password" || id === "repassword" ? "" : "hidden"
+            } absolute inset-y-0 right-0 flex items-center p-1 pr-3 cursor-pointer`}
+          >
+            {toggleShow.status && toggleShow.id === id ? (
+              <EyeClosed
+                width={16}
+                height={16}
+                styles={"text-teal-600 dark:text-teal-400"}
+              />
+            ) : (
+              <Eye
+                width={16}
+                height={16}
+                styles={
+                  "hover:text-teal-600 hover:transition-colors dark:hover:text-teal-400"
+                }
+              />
+            )}
+          </span>
         </div>
       </div>
     );

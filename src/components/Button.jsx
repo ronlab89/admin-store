@@ -48,6 +48,12 @@ const Button = ({
     hover:text-teal-600 dark:hover:text-teal-400 
     text-slate-800 dark:text-slate-200 focus:ring-teal-200 dark:focus:ring-teal-800
   `,
+    datatable: `
+  border-0 border-slate-800 dark:border-slate-200
+  hover:border-teal-600 dark:hover:border-teal-400
+  hover:text-teal-600 dark:hover:text-teal-400 
+  text-slate-800 dark:text-slate-200 focus:ring-teal-200 dark:focus:ring-teal-800
+`,
     dashed: `
     border border-dashed border-teal-600 dark:border-teal-400 
     hover:bg-teal-600 hover:text-slate-100 dark:hover:bg-teal-400 dark:hover:text-slate-900 

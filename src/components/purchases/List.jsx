@@ -1,73 +1,46 @@
-import { lazy, useEffect, useState, Suspense } from "react";
+import { Suspense, useState, useEffect, lazy } from "react";
 import { createColumnHelper } from "@tanstack/react-table";
 
 import { useToggleStore } from "@/store/toggle.store";
 import { useAuthStore } from "@/store/auth.store";
-import { useProductStore } from "@/store/product.store";
-import { useProductCategoryStore } from "@/store/productCategory.store";
-import { useSupplierStore } from "@/store/supplier.store";
+import { usePurchaseStore } from "@/store/purchase.store";
 
-import { getProductList } from "@/utils/productMethods";
+import { getPurchaseList } from "../../utils/PurchaseMethod";
 import { formatterco, formatterus } from "@/utils/formatter";
-import { getProductCategoryList } from "@/utils/productCategoryMethods";
-import { getSupplierList } from "@/utils/supplierMethods";
 
-const DataTable = lazy(() => import("@/components/DataTable"));
 const Loader = lazy(() => import("@/components/Loader"));
 const Select = lazy(() => import("@/components/Select"));
+const DataTable = lazy(() => import("@/components/DataTable"));
 
 import Dots from "@/icons/Dots";
 
 import moment from "moment/moment";
 import "moment/locale/es";
 
-const Products = () => {
+const List = () => {
   const token = useAuthStore((state) => state.token);
-  const productList = useProductStore((state) => state.productList);
-  const handleProductList = useProductStore((state) => state.handleProductList);
+  const purchaseList = usePurchaseStore((state) => state.purchaseList);
+  const handlePurchaseList = usePurchaseStore(
+    (state) => state.handlePurchaseList
+  );
+  const toggleSidebar = useToggleStore((state) => state.toggleSidebar);
   const toggleModal = useToggleStore((state) => state.toggleModal);
   const handleToggleModal = useToggleStore((state) => state.handleToggleModal);
   const handleToggleSelect = useToggleStore(
     (state) => state.handleToggleSelect
-  );
-  const supplierList = useSupplierStore((state) => state.supplierList);
-  const handleSupplierList = useSupplierStore(
-    (state) => state.handleSupplierList
-  );
-  const productCategoryList = useProductCategoryStore(
-    (state) => state.productCategoryList
-  );
-  const handleProductCategoryList = useProductCategoryStore(
-    (state) => state.handleProductCategoryList
   );
 
   const [loading, setLoading] = useState({});
   const [errorAxios, setErrorAxios] = useState({});
 
   useEffect(() => {
-    if (productList === null) {
-      getProductList({ setLoading, token, handleProductList });
-    }
-    if (productCategoryList === null) {
-      getProductCategoryList({
-        token,
-        setLoading,
-        setErrorAxios,
-        handleProductCategoryList,
-      });
-    }
-    if (supplierList === null) {
-      getSupplierList({
-        setLoading,
-        token,
-        setErrorAxios,
-        handleSupplierList,
-      });
+    if (purchaseList === null) {
+      getPurchaseList({ setLoading, token, handlePurchaseList });
     }
   }, []);
 
   const reload = () => {
-    getProductList({ setLoading, token, handleProductList });
+    getPurchaseList({ setLoading, token, handlePurchaseList });
   };
 
   const columnHelper = createColumnHelper();
@@ -97,26 +70,25 @@ const Products = () => {
     //     </div>
     //   ),
     // },
-    columnHelper.accessor("name", {
-      header: "Producto",
-    }),
-    columnHelper.accessor("category.name", {
-      header: "Categoria",
-    }),
-    columnHelper.accessor("description", {
-      header: "Description",
-    }),
-    columnHelper.accessor("price", {
-      header: "Precio Unitario",
-      cell: ({ row }) => formatterco.format(row.original.price),
-    }),
-    columnHelper.accessor("supplier.name", {
+    columnHelper.accessor("supplierId.name", {
       header: "Proveedor",
     }),
-    columnHelper.accessor("events_history.user_created_at", {
-      header: "Creado",
+    columnHelper.accessor("payment_method.name", {
+      header: "Metodo de pago",
+    }),
+    columnHelper.accessor("products", {
+      header: "Articulos",
       cell: ({ row }) =>
-        moment(row.original.events_history.user_created_at).format("LLL"),
+        row.original.products.reduce((acc, curr) => acc + curr.quantity, 0),
+    }),
+    columnHelper.accessor("total_amount", {
+      header: "Total",
+      cell: ({ row }) => formatterco.format(row.original.total_amount),
+    }),
+    columnHelper.accessor("events_history.purchase_created_at", {
+      header: "Fecha",
+      cell: ({ row }) =>
+        moment(row.original.events_history.purchase_created_at).format("LLL"),
     }),
     columnHelper.accessor("acciones", {
       header: "",
@@ -136,22 +108,22 @@ const Products = () => {
             <Suspense fallback={""}>
               <Select
                 actions={[
-                  // {
-                  //   name: "Detalles",
-                  //   func: "modal",
-                  //   type: "details-product",
-                  //   data: row.original,
-                  // },
+                  {
+                    name: "Detalles",
+                    func: "modal",
+                    type: "details-purchase",
+                    data: row.original,
+                  },
                   {
                     name: "Editar",
                     func: "modal",
-                    type: "edit-product",
+                    type: "edit-purchase",
                     data: row.original,
                   },
                   {
                     name: "Eliminar",
                     func: "modalDelete",
-                    type: "delete-product",
+                    type: "delete-purchase",
                     data: row.original,
                   },
                 ]}
@@ -167,16 +139,22 @@ const Products = () => {
   ];
 
   return (
-    <>
+    <section
+      className={`${
+        toggleSidebar
+          ? "lg:w-[74vw] xl:w-[79.2vw] min-[90rem]:w-[81.5vw] 2xl:w-[82.5vw] mt-[0px] px-[10px]"
+          : "lg:w-[90.5vw] xl:w-[92.3vw] min-[90rem]:w-[93.15vw] 2xl:w-[93.45vw] px-[10px]"
+      } px-[20px] flex justify-center items-start`}
+    >
       <Suspense fallback={""}>
         <DataTable
-          data={productList || []}
+          data={purchaseList || []}
           columns={columns}
-          text={"Crear"}
+          text={""}
           reload={reload}
           create={handleToggleModal}
           boolean={toggleModal}
-          createTypeModal={"create-product"}
+          createTypeModal={"create-purchase"}
         />
       </Suspense>
       {loading.customers ? (
@@ -184,8 +162,8 @@ const Products = () => {
           <Loader />
         </Suspense>
       ) : null}
-    </>
+    </section>
   );
 };
 
-export default Products;
+export default List;

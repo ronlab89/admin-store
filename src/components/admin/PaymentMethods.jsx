@@ -1,13 +1,16 @@
-import React from "react";
-import VerticalTabs from "../tabs/VerticalTabs";
-import { paymentMethods } from "../../data/paymentMethods";
-import Payment from "@/icons/Payment";
-import { useAuthStore } from "../../store/auth.store";
+import { paymentMethods } from "@/data/paymentMethods";
+
+import { useAuthStore } from "@/store/auth.store";
 import { usePaymentMethodStore } from "@/store/paymentMethod.store";
+
 import {
   createPaymentMethod,
   updatePaymentMethod,
-} from "../../utils/paymentMethods";
+} from "@/utils/paymentMethods";
+
+import VerticalTabs from "@/components/tabs/VerticalTabs";
+
+import Payment from "@/icons/Payment";
 
 const PaymentMethods = () => {
   const token = useAuthStore((state) => state.token);
@@ -20,7 +23,6 @@ const PaymentMethods = () => {
   );
 
   const handleCreate = (data, setLoading, setErrorAxios) => {
-    console.log({ data });
     createPaymentMethod({
       data,
       token,
@@ -36,7 +38,6 @@ const PaymentMethods = () => {
     setLoading,
     setErrorAxios
   ) => {
-    console.log({ name, description, data: isEdit.data });
     updatePaymentMethod({
       data: { name, description },
       token,

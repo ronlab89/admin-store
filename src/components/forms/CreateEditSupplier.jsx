@@ -1,16 +1,18 @@
-import { createSupplier, updateSupplier } from "../../utils/supplierMethods";
-import React, { useEffect, useState } from "react";
-import Heading from "@/components/Heading";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { formValidate } from "@/utils/formValidate";
-
-import Button from "@/components/Button";
-import InputText from "@/components/InputText";
 
 import { useAuthStore } from "@/store/auth.store";
 import { useToggleStore } from "@/store/toggle.store";
+import { useSupplierStore } from "@/store/supplier.store";
 
+import { createSupplier, updateSupplier } from "@/utils/supplierMethods";
+import { formValidate } from "@/utils/formValidate";
+
+import Heading from "@/components/Heading";
+import Button from "@/components/Button";
+import InputText from "@/components/InputText";
 import Loader from "@/components/Loader";
+
 import Letter from "@/icons/Letter";
 import Phone from "@/icons/Phone";
 import Email from "@/icons/Email";
@@ -19,7 +21,6 @@ import Location from "@/icons/Location";
 import Map from "@/icons/Map";
 import City from "@/icons/City";
 import Zip from "@/icons/Zip";
-import { useSupplierStore } from "@/store/supplier.store";
 
 const CreateEditSupplier = () => {
   const token = useAuthStore((state) => state.token);
@@ -141,17 +142,17 @@ const CreateEditSupplier = () => {
             : "Registrar proveedor"}
         </span>
       </Heading>
-      <article className="w-full h-full pt-10 px-[40px]">
+      <article className="w-full min-h-screen h-screen max-h-full pt-5 min-[90rem]:px-[40px] overflow-x-hidden overflow-y-auto pb-[200px]">
         <form
           onSubmit={
             modalType === "edit-supplier"
               ? handleSubmit(onEdit)
               : handleSubmit(onRegister)
           }
-          className="grid grid-cols-1 md:grid-cols-2 place-items-center gap-5"
+          className="grid grid-cols-1 md:grid-cols-2 place-items-center gap-3 min-[90rem]:gap-4"
           noValidate
         >
-          <div className="w-full">
+          <div className="w-[80%] xl:w-[90%] min-[90rem]:w-[95%] 2xl:w-full">
             <InputText
               icon={<Letter width={16} height={16} styles={""} />}
               type={"text"}
@@ -171,7 +172,7 @@ const CreateEditSupplier = () => {
               errorId={errors.name}
             />
           </div>
-          <div className="w-full">
+          <div className="w-[80%] xl:w-[90%] min-[90rem]:w-[95%] 2xl:w-full">
             <InputText
               icon={<Phone width={16} height={16} styles={""} />}
               type={"text"}
@@ -191,7 +192,7 @@ const CreateEditSupplier = () => {
               errorId={errors.phone}
             />
           </div>
-          <div className="w-full">
+          <div className="w-[80%] xl:w-[90%] min-[90rem]:w-[95%] 2xl:w-full">
             <InputText
               icon={<Email width={16} height={16} styles={""} />}
               type={"email"}
@@ -211,7 +212,7 @@ const CreateEditSupplier = () => {
               errorId={errors.email}
             />
           </div>
-          <div className="w-full">
+          <div className="w-[80%] xl:w-[90%] min-[90rem]:w-[95%] 2xl:w-full">
             <InputText
               icon={<Website width={16} height={16} styles={""} />}
               type={"text"}
@@ -231,7 +232,7 @@ const CreateEditSupplier = () => {
               errorId={errors.website}
             />
           </div>
-          <div className="w-full">
+          <div className="w-[80%] xl:w-[90%] min-[90rem]:w-[95%] 2xl:w-full">
             <InputText
               icon={<Location width={16} height={16} styles={""} />}
               type={"text"}
@@ -251,7 +252,7 @@ const CreateEditSupplier = () => {
               errorId={errors.address1}
             />
           </div>
-          <div className="w-full">
+          <div className="w-[80%] xl:w-[90%] min-[90rem]:w-[95%] 2xl:w-full">
             <InputText
               icon={<Location width={16} height={16} styles={""} />}
               type={"text"}
@@ -271,7 +272,7 @@ const CreateEditSupplier = () => {
               errorId={errors.address2}
             />
           </div>
-          <div className="w-full">
+          <div className="w-[80%] xl:w-[90%] min-[90rem]:w-[95%] 2xl:w-full">
             <InputText
               icon={<City width={16} height={16} styles={""} />}
               type={"text"}
@@ -291,7 +292,7 @@ const CreateEditSupplier = () => {
               errorId={errors.city}
             />
           </div>
-          <div className="w-full">
+          <div className="w-[80%] xl:w-[90%] min-[90rem]:w-[95%] 2xl:w-full">
             <InputText
               icon={<Map width={16} height={16} styles={""} />}
               type={"text"}
@@ -311,7 +312,7 @@ const CreateEditSupplier = () => {
               errorId={errors.province}
             />
           </div>
-          <div className="w-full">
+          <div className="w-[80%] xl:w-[90%] min-[90rem]:w-[95%] 2xl:w-full">
             <InputText
               icon={<Map width={16} height={16} styles={""} />}
               type={"text"}
@@ -331,8 +332,7 @@ const CreateEditSupplier = () => {
               errorId={errors.country}
             />
           </div>
-
-          <div className="w-full">
+          <div className="w-[80%] xl:w-[90%] min-[90rem]:w-[95%] 2xl:w-full">
             <InputText
               icon={<Zip width={16} height={16} styles={""} />}
               type={"text"}
@@ -353,13 +353,14 @@ const CreateEditSupplier = () => {
             />
           </div>
 
-          <div className="w-full col-span-1 md:col-span-2 flex justify-start items-start gap-10">
+          <div className="w-full col-span-1 md:col-span-2 flex justify-start items-start lg:ml-[85px] xl:ml-[55px] min-[90rem]:ml-[30px] 2xl:ml-0 mt-5">
             <Button
               text={modalType === "edit-supplier" ? "Actualizar" : "Registrar"}
               icon={""}
               type={"submit"}
               styles={"cursor-pointer"}
               mode={"form"}
+              variant={""}
             />
           </div>
         </form>

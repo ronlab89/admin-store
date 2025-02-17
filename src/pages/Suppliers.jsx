@@ -1,35 +1,32 @@
-import React, { Suspense, useEffect, useState } from "react";
-import DataTable from "@/components/DataTable";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { createColumnHelper } from "@tanstack/react-table";
-import { useShallow } from "zustand/shallow";
-import { useUserStore } from "@/store/user.store";
-import { getUserList } from "../utils/userMethods";
-import { formatterco } from "@/utils/formatter";
-import { useAuthStore } from "../store/auth.store";
+
+import { useAuthStore } from "@/store/auth.store";
 import { useToggleStore } from "@/store/toggle.store";
-import Dots from "@/icons/Dots";
-import Select from "@/components/Select";
-import Loader from "@/components/Loader";
 import { useSupplierStore } from "@/store/supplier.store";
 
-import IndeterminateCheckbox from "@/components/datatable/IndeterminateCheckbox";
+import { getSupplierList } from "@/utils/supplierMethods";
+import { handleCopyText } from "@/utils/Copy";
+
+const DataTable = lazy(() => import("@/components/DataTable"));
+const Select = lazy(() => import("@/components/Select"));
+const Loader = lazy(() => import("@/components/Loader"));
+
+import Dots from "@/icons/Dots";
+
 import moment from "moment/moment";
 import "moment/locale/es";
-import { getSupplierList } from "../utils/supplierMethods";
 
 const Suppliers = () => {
   const token = useAuthStore((state) => state.token);
-  const user = useAuthStore((state) => state.user);
   const supplierList = useSupplierStore((state) => state.supplierList);
   const handleSupplierList = useSupplierStore(
     (state) => state.handleSupplierList
   );
-  const { toggleModal, handleToggleModal, handleToggleSelect } = useToggleStore(
-    useShallow((state) => ({
-      toggleModal: state.toggleModal,
-      handleToggleModal: state.handleToggleModal,
-      handleToggleSelect: state.handleToggleSelect,
-    }))
+  const toggleModal = useToggleStore((state) => state.toggleModal);
+  const handleToggleModal = useToggleStore((state) => state.handleToggleModal);
+  const handleToggleSelect = useToggleStore(
+    (state) => state.handleToggleSelect
   );
 
   const [loading, setLoading] = useState({});
@@ -58,41 +55,77 @@ const Suppliers = () => {
   const columnHelper = createColumnHelper();
 
   const columns = [
-    {
-      id: "select",
-      header: ({ table }) => (
-        <IndeterminateCheckbox
-          {...{
-            checked: table.getIsAllRowsSelected(),
-            indeterminate: table.getIsSomeRowsSelected(),
-            onChange: table.getToggleAllRowsSelectedHandler(),
-          }}
-        />
-      ),
-      cell: ({ row }) => (
-        <div className="px-1">
-          <IndeterminateCheckbox
-            {...{
-              checked: row.getIsSelected(),
-              disabled: !row.getCanSelect(),
-              indeterminate: row.getIsSomeSelected(),
-              onChange: row.getToggleSelectedHandler(),
-            }}
-          />
-        </div>
-      ),
-    },
+    // {
+    //   id: "select",
+    //   header: ({ table }) => (
+    //     <IndeterminateCheckbox
+    //       {...{
+    //         checked: table.getIsAllRowsSelected(),
+    //         indeterminate: table.getIsSomeRowsSelected(),
+    //         onChange: table.getToggleAllRowsSelectedHandler(),
+    //       }}
+    //     />
+    //   ),
+    //   cell: ({ row }) => (
+    //     <div className="px-1">
+    //       <IndeterminateCheckbox
+    //         {...{
+    //           checked: row.getIsSelected(),
+    //           disabled: !row.getCanSelect(),
+    //           indeterminate: row.getIsSomeSelected(),
+    //           onChange: row.getToggleSelectedHandler(),
+    //         }}
+    //       />
+    //     </div>
+    //   ),
+    // },
     columnHelper.accessor("name", {
       header: "Proveedor",
     }),
     columnHelper.accessor("contactInfo.email", {
       header: "Correo Electrónico",
+      cell: ({ row }) => (
+        <div
+          onClick={() =>
+            handleCopyText(
+              row.original.contactInfo.email,
+              "el correo electrónico"
+            )
+          }
+          className="flex justify-center items-center gap-2 cursor-pointer hover:text-teal-600 dark:hover:text-teal-400 hover:transition-colors"
+        >
+          {row.original.contactInfo.email}
+        </div>
+      ),
     }),
     columnHelper.accessor("contactInfo.phone", {
       header: "Teléfono",
+      cell: ({ row }) => (
+        <div
+          onClick={() =>
+            handleCopyText(row.original.contactInfo.phone, "el teléfono")
+          }
+          className="flex justify-center items-center gap-2 cursor-pointer hover:text-teal-600 dark:hover:text-teal-400 hover:transition-colors"
+        >
+          {row.original.contactInfo.phone}
+        </div>
+      ),
     }),
     columnHelper.accessor("contactInfo.website", {
       header: "Sitio Web",
+      cell: ({ row }) => (
+        <a
+          href={row.original.contactInfo.website}
+          rel="nopener norreferer"
+          target="_blank"
+          className="hover:text-teal-600 dark:hover:text-teal-400 hover:transition-colors"
+        >
+          {row.original.contactInfo.website}
+        </a>
+      ),
+    }),
+    columnHelper.accessor("address.city", {
+      header: "Ciudad",
     }),
     columnHelper.accessor("events_history.supplier_created_at", {
       header: "Creado",
@@ -114,31 +147,33 @@ const Suppliers = () => {
             <span className="sr-only">Open menu</span>
           </button>
           <div className="absolute top-[-50px] left-[-65px]">
-            <Select
-              actions={[
-                {
-                  name: "Detalles",
-                  func: "modal",
-                  type: "details-suplier",
-                  data: row.original,
-                },
-                {
-                  name: "Editar",
-                  func: "modal",
-                  type: "edit-supplier",
-                  data: row.original,
-                },
-                {
-                  name: "Eliminar",
-                  func: "modalDelete",
-                  type: "delete-supplier",
-                  data: row.original,
-                },
-              ]}
-              id={row.original._id}
-              rowIndex={row.index}
-              totalRows={table.getRowModel().rows.length}
-            />
+            <Suspense fallback={""}>
+              <Select
+                actions={[
+                  // {
+                  //   name: "Detalles",
+                  //   func: "modal",
+                  //   type: "details-suplier",
+                  //   data: row.original,
+                  // },
+                  {
+                    name: "Editar",
+                    func: "modal",
+                    type: "edit-supplier",
+                    data: row.original,
+                  },
+                  {
+                    name: "Eliminar",
+                    func: "modalDelete",
+                    type: "delete-supplier",
+                    data: row.original,
+                  },
+                ]}
+                id={row.original._id}
+                rowIndex={row.index}
+                totalRows={table.getRowModel().rows.length}
+              />
+            </Suspense>
           </div>
         </div>
       ),
@@ -158,7 +193,7 @@ const Suppliers = () => {
           createTypeModal={"create-supplier"}
         />
       </Suspense>
-      {loading.users ? (
+      {loading.suppliers ? (
         <Suspense fallback={""}>
           <Loader />
         </Suspense>

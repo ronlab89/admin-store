@@ -1,33 +1,32 @@
-import React, { Suspense, useEffect, useState } from "react";
-import DataTable from "@/components/DataTable";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { createColumnHelper } from "@tanstack/react-table";
-import { useShallow } from "zustand/shallow";
-import { formatterco } from "@/utils/formatter";
-import { useAuthStore } from "../store/auth.store";
-import { useToggleStore } from "@/store/toggle.store";
-import Dots from "@/icons/Dots";
-import Select from "@/components/Select";
-import Loader from "@/components/Loader";
 
-import IndeterminateCheckbox from "@/components/datatable/IndeterminateCheckbox";
+import { useAuthStore } from "@/store/auth.store";
+import { useToggleStore } from "@/store/toggle.store";
+import { useCustomerStore } from "@/store/customer.store";
+
+import { getCustomerList } from "@/utils/customerMethods";
+import { handleCopyText } from "@/utils/Copy";
+
+const DataTable = lazy(() => import("@/components/DataTable"));
+const Select = lazy(() => import("@/components/Select"));
+const Loader = lazy(() => import("@/components/Loader"));
+
+import Dots from "@/icons/Dots";
+
 import moment from "moment/moment";
 import "moment/locale/es";
-import { useCustomerStore } from "@/store/customer.store";
-import { getCustomerList } from "../utils/customerMethods";
 
 const Customers = () => {
   const token = useAuthStore((state) => state.token);
-  const user = useAuthStore((state) => state.user);
   const customerList = useCustomerStore((state) => state.customerList);
   const handleCustomerList = useCustomerStore(
     (state) => state.handleCustomerList
   );
-  const { toggleModal, handleToggleModal, handleToggleSelect } = useToggleStore(
-    useShallow((state) => ({
-      toggleModal: state.toggleModal,
-      handleToggleModal: state.handleToggleModal,
-      handleToggleSelect: state.handleToggleSelect,
-    }))
+  const toggleModal = useToggleStore((state) => state.toggleModal);
+  const handleToggleModal = useToggleStore((state) => state.handleToggleModal);
+  const handleToggleSelect = useToggleStore(
+    (state) => state.handleToggleSelect
   );
 
   const [loading, setLoading] = useState({});
@@ -56,30 +55,30 @@ const Customers = () => {
   const columnHelper = createColumnHelper();
 
   const columns = [
-    {
-      id: "select",
-      header: ({ table }) => (
-        <IndeterminateCheckbox
-          {...{
-            checked: table.getIsAllRowsSelected(),
-            indeterminate: table.getIsSomeRowsSelected(),
-            onChange: table.getToggleAllRowsSelectedHandler(),
-          }}
-        />
-      ),
-      cell: ({ row }) => (
-        <div className="px-1">
-          <IndeterminateCheckbox
-            {...{
-              checked: row.getIsSelected(),
-              disabled: !row.getCanSelect(),
-              indeterminate: row.getIsSomeSelected(),
-              onChange: row.getToggleSelectedHandler(),
-            }}
-          />
-        </div>
-      ),
-    },
+    // {
+    //   id: "select",
+    //   header: ({ table }) => (
+    //     <IndeterminateCheckbox
+    //       {...{
+    //         checked: table.getIsAllRowsSelected(),
+    //         indeterminate: table.getIsSomeRowsSelected(),
+    //         onChange: table.getToggleAllRowsSelectedHandler(),
+    //       }}
+    //     />
+    //   ),
+    //   cell: ({ row }) => (
+    //     <div className="px-1">
+    //       <IndeterminateCheckbox
+    //         {...{
+    //           checked: row.getIsSelected(),
+    //           disabled: !row.getCanSelect(),
+    //           indeterminate: row.getIsSomeSelected(),
+    //           onChange: row.getToggleSelectedHandler(),
+    //         }}
+    //       />
+    //     </div>
+    //   ),
+    // },
     columnHelper.accessor("name", {
       header: "Cliente",
       cell: ({ row }) => (
@@ -91,9 +90,27 @@ const Customers = () => {
     }),
     columnHelper.accessor("email", {
       header: "Correo Electrónico",
+      cell: ({ row }) => (
+        <div
+          onClick={() =>
+            handleCopyText(row.original.email, "el correo electrónico")
+          }
+          className="flex justify-center items-center gap-2 cursor-pointer hover:text-teal-600 dark:hover:text-teal-400 hover:transition-colors"
+        >
+          {row.original.email}
+        </div>
+      ),
     }),
     columnHelper.accessor("phone", {
       header: "Teléfono",
+      cell: ({ row }) => (
+        <div
+          onClick={() => handleCopyText(row.original.phone, "el teléfono")}
+          className="flex justify-center items-center gap-2 cursor-pointer hover:text-teal-600 dark:hover:text-teal-400 hover:transition-colors"
+        >
+          {row.original.phone}
+        </div>
+      ),
     }),
     columnHelper.accessor("address.city", {
       header: "Ciudad",
@@ -118,31 +135,33 @@ const Customers = () => {
             <span className="sr-only">Open menu</span>
           </button>
           <div className="absolute top-[-50px] left-[-65px]">
-            <Select
-              actions={[
-                {
-                  name: "Detalles",
-                  func: "modal",
-                  type: "details-customer",
-                  data: row.original,
-                },
-                {
-                  name: "Editar",
-                  func: "modal",
-                  type: "edit-customer",
-                  data: row.original,
-                },
-                {
-                  name: "Eliminar",
-                  func: "modalDelete",
-                  type: "delete-customer",
-                  data: row.original,
-                },
-              ]}
-              id={row.original._id}
-              rowIndex={row.index}
-              totalRows={table.getRowModel().rows.length}
-            />
+            <Suspense fallback={""}>
+              <Select
+                actions={[
+                  // {
+                  //   name: "Detalles",
+                  //   func: "modal",
+                  //   type: "details-customer",
+                  //   data: row.original,
+                  // },
+                  {
+                    name: "Editar",
+                    func: "modal",
+                    type: "edit-customer",
+                    data: row.original,
+                  },
+                  {
+                    name: "Eliminar",
+                    func: "modalDelete",
+                    type: "delete-customer",
+                    data: row.original,
+                  },
+                ]}
+                id={row.original._id}
+                rowIndex={row.index}
+                totalRows={table.getRowModel().rows.length}
+              />
+            </Suspense>
           </div>
         </div>
       ),

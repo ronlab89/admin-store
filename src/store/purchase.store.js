@@ -2,9 +2,9 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 const initialState = {
-  saleList: null,
+  purchaseList: null,
   preticket: {
-    customer: {
+    supplier: {
       name: null,
       surname: null,
       email: null,
@@ -34,16 +34,16 @@ const initialState = {
 // Función para resetear estado
 const resetState = (set) => set({ ...initialState });
 
-export const useSaleStore = create(
+export const usePurchaseStore = create(
   persist(
     (set, get) => ({
       // Variables
       ...initialState,
 
       // Methods
-      handleSaleList: (data) =>
+      handlePurchaseList: (data) =>
         set((state) => ({
-          saleList: data,
+          purchaseList: data,
         })),
       handlePreticket: (data) =>
         set((state) => ({
@@ -52,7 +52,7 @@ export const useSaleStore = create(
       resetPreticket: () =>
         set((state) => ({
           preticket: {
-            customer: {
+            supplier: {
               name: null,
               surname: null,
               email: null,
@@ -78,12 +78,12 @@ export const useSaleStore = create(
             ],
           },
         })),
-      resetSale: () => resetState(set),
+      resetPurchase: () => resetState(set),
     }),
     {
-      name: "sale",
+      name: "purchase",
       onRehydrateStorage: () => (state) => {
-        // console.log("Rehydrating sale state...", state);
+        // console.log("Rehydrating purchase state...", state);
       },
     }
   )

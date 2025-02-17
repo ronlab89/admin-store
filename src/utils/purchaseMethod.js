@@ -1,44 +1,44 @@
 import axios from "axios";
 import { notify } from "./alertNotify";
 
-const getSaleList = async ({ setLoading, token, handleSaleList }) => {
+const getPurchaseList = async ({ setLoading, token, handlePurchaseList }) => {
   try {
-    setLoading((prev) => ({ ...prev, saleList: true }));
+    setLoading((prev) => ({ ...prev, purchaseList: true }));
     const res = await axios({
       method: "GET",
-      url: `${import.meta.env.VITE_API_URL}/sales/list`,
+      url: `${import.meta.env.VITE_API_URL}/purchases/list`,
       headers: { Authorization: `Bearer ${token}` },
     });
-    console.log("Res sale list: ", res);
+    console.log("Res purchase list: ", res);
     if (res.status === 200) {
-      handleSaleList(res.data.allSales);
+      handlePurchaseList(res.data.allPurchases);
     }
   } catch (error) {
     console.log(error);
     setErrorAxios(error?.response?.data);
     notify("error", error?.response?.data);
   } finally {
-    setLoading((prev) => ({ ...prev, saleList: false }));
+    setLoading((prev) => ({ ...prev, purchaseList: false }));
   }
 };
 
-const createSale = async ({
+const createPurchase = async ({
   data,
   token,
   user,
   setLoading,
   setErrorAxios,
   resetPreticket,
-  saleList,
-  handleSaleList,
+  purchaseList,
+  handlePurchaseList,
 }) => {
   try {
-    setLoading((prev) => ({ ...prev, createSale: true }));
+    setLoading((prev) => ({ ...prev, createPurchase: true }));
     const res = await axios({
       method: "POST",
-      url: `${import.meta.env.VITE_API_URL}/sales/create`,
+      url: `${import.meta.env.VITE_API_URL}/purchases/create`,
       data: {
-        customerId: data.customerId,
+        supplierId: data.supplierId,
         products: data.products,
         total_amount: data.total_amount,
         payment_method: data.payment_method,
@@ -48,12 +48,12 @@ const createSale = async ({
       },
       headers: { Authorization: `Bearer ${token}` },
     });
-    console.log("Res create sale: ", res);
+    console.log("Res create purchase: ", res);
     if (res.status === 201) {
       notify("success", res.data.message);
       setTimeout(() => {
-        const updateSaleList = [...saleList, res.data.data];
-        handleSaleList(updateSaleList);
+        const updatePurchaseList = [...purchaseList, res.data.data];
+        handlePurchaseList(updatePurchaseList);
         resetPreticket();
       }, 2000);
     }
@@ -62,33 +62,35 @@ const createSale = async ({
     setErrorAxios(error?.response?.data);
     notify("error", error?.response?.data);
   } finally {
-    setLoading((prev) => ({ ...prev, createSale: false }));
+    setLoading((prev) => ({ ...prev, createPurchase: false }));
   }
 };
 
-const deleteSale = async ({
+const deletePurchase = async ({
   id,
   token,
   setLoading,
   setErrorAxios,
   handleToggleModal,
   toggleModal,
-  saleList,
-  handleSaleList,
+  purchaseList,
+  handlePurchaseList,
 }) => {
   try {
-    setLoading((prev) => ({ ...prev, deleteSale: true }));
+    setLoading((prev) => ({ ...prev, deletePurchase: true }));
     const res = await axios({
       method: "DELETE",
-      url: `${import.meta.env.VITE_API_URL}/sales/${id}`,
+      url: `${import.meta.env.VITE_API_URL}/purchases/${id}`,
       headers: { Authorization: `Bearer ${token}` },
     });
-    console.log("Res delete sale: ", res);
+    console.log("Res delete purchase: ", res);
     if (res.status === 200) {
       notify("success", res.data.message);
       setTimeout(() => {
-        const updateSaleList = saleList.filter((sale) => sale._id !== id);
-        handleSaleList(updateSaleList);
+        const updatePurchaseList = purchaseList.filter(
+          (purchase) => purchase._id !== id
+        );
+        handlePurchaseList(updatePurchaseList);
         handleToggleModal(!toggleModal);
       }, 2000);
     }
@@ -97,8 +99,8 @@ const deleteSale = async ({
     setErrorAxios(error?.response?.data);
     notify("error", error?.response?.data);
   } finally {
-    setLoading((prev) => ({ ...prev, deleteSale: false }));
+    setLoading((prev) => ({ ...prev, deletePurchase: false }));
   }
 };
 
-export { getSaleList, createSale, deleteSale };
+export { getPurchaseList, createPurchase, deletePurchase };

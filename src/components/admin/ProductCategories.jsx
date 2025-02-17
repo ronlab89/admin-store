@@ -1,13 +1,16 @@
-import React, { useState } from "react";
-import VerticalTabs from "../tabs/VerticalTabs";
-import { productCategories } from "../../data/productCategories";
-import { useProductCategoryStore } from "@/store/productCategory";
-import Category from "@/icons/Category";
+import { productCategories } from "@/data/productCategories";
+
+import { useProductCategoryStore } from "@/store/productCategory.store";
+import { useAuthStore } from "@/store/auth.store";
+
 import {
   createProductCategory,
   updateProductCategory,
-} from "../../utils/productCategoryMethods";
-import { useAuthStore } from "../../store/auth.store";
+} from "@/utils/productCategoryMethods";
+
+import VerticalTabs from "@/components/tabs/VerticalTabs";
+
+import Category from "@/icons/Category";
 
 const ProductCategories = () => {
   const token = useAuthStore((state) => state.token);
@@ -20,7 +23,6 @@ const ProductCategories = () => {
   );
 
   const handleCreate = (data, setLoading, setErrorAxios) => {
-    console.log({ data });
     createProductCategory({
       data,
       token,
@@ -36,7 +38,6 @@ const ProductCategories = () => {
     setLoading,
     setErrorAxios
   ) => {
-    console.log({ name, description, data: isEdit.data });
     updateProductCategory({
       data: { name, description },
       token,

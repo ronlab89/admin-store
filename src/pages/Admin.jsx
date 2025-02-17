@@ -1,21 +1,22 @@
-import React, { useEffect, useState } from "react";
-import Tabs from "../components/Tabs/Tabs";
-import ProductCategories from "../components/admin/ProductCategories";
-import { getProductCategoryList } from "../utils/productCategoryMethods";
-import { useAuthStore } from "../store/auth.store";
-import { useProductCategoryStore } from "@/store/productCategory";
-import { useToggleStore } from "@/store/toggle.store";
-import { useShallow } from "zustand/shallow";
-import PaymentMethods from "../components/admin/PaymentMethods";
-import ExpenseCategories from "../components/admin/ExpenseCategories";
-import { getPaymentMethodList } from "../utils/paymentMethods";
+import { useEffect, useState } from "react";
+
+import { useAuthStore } from "@/store/auth.store";
+import { useProductCategoryStore } from "@/store/productCategory.store";
 import { usePaymentMethodStore } from "@/store/paymentMethod.store";
-import { getExpenseCategoryList } from "../utils/expenseCategoryMethods";
 import { useExpenseCategoryStore } from "@/store/expenseCategory.store";
+import { useToggleStore } from "@/store/toggle.store";
+
+import { getProductCategoryList } from "@/utils/productCategoryMethods";
+import { getPaymentMethodList } from "@/utils/paymentMethods";
+import { getExpenseCategoryList } from "@/utils/expenseCategoryMethods";
+
+import Tabs from "@/components/Tabs/Tabs";
+import ProductCategories from "@/components/admin/ProductCategories";
+import PaymentMethods from "@/components/admin/PaymentMethods";
+import ExpenseCategories from "@/components/admin/ExpenseCategories";
 
 const Admin = () => {
   const token = useAuthStore((state) => state.token);
-  const user = useAuthStore((state) => state.user);
   const productCategoryList = useProductCategoryStore(
     (state) => state.productCategoryList
   );
@@ -34,13 +35,7 @@ const Admin = () => {
   const handleExpenseCategoryList = useExpenseCategoryStore(
     (state) => state.handleExpenseCategoryList
   );
-  const { toggleModal, handleToggleModal, handleToggleSelect } = useToggleStore(
-    useShallow((state) => ({
-      toggleModal: state.toggleModal,
-      handleToggleModal: state.handleToggleModal,
-      handleToggleSelect: state.handleToggleSelect,
-    }))
-  );
+  const toggleSidebar = useToggleStore((state) => state.toggleSidebar);
 
   const [loading, setLoading] = useState({});
   const [errorAxios, setErrorAxios] = useState(null);
@@ -94,7 +89,13 @@ const Admin = () => {
   }, []);
 
   return (
-    <section className="w-full h-full">
+    <section
+      className={`${
+        toggleSidebar
+          ? "lg:w-[76.5vw] xl:w-[81.2vw] min-[90rem]:w-[83.5vw] 2xl:w-[84.5vw] mt-[0px] px-[20px]"
+          : "lg:w-[92.9vw] xl:w-[94.3vw] min-[90rem]:w-[95.15vw] 2xl:w-[95.45vw] px-[20px]"
+      }`}
+    >
       <Tabs tabs={adminTabs} content={content} />
     </section>
   );

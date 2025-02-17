@@ -1,18 +1,17 @@
 import { lazy, useEffect, useState, Suspense } from "react";
-const DataTable = lazy(() => import("@/components/DataTable"));
 import { createColumnHelper } from "@tanstack/react-table";
-import { useShallow } from "zustand/react/shallow";
+
 import { useToggleStore } from "@/store/toggle.store";
-import IndeterminateCheckbox from "@/components/datatable/IndeterminateCheckbox";
 import { useAuthStore } from "@/store/auth.store";
 import { useSaleStore } from "@/store/sale.store";
-import Loader from "@/components/Loader";
-import Dots from "@/icons/Dots";
-import Select from "@/components/Select";
 
 import { formatterco, formatterus } from "@/utils/formatter";
-import { useSupplierStore } from "@/store/supplier.store";
 import { getSaleList } from "@/utils/saleMethods";
+
+import Dots from "@/icons/Dots";
+const Select = lazy(() => import("@/components/Select"));
+const Loader = lazy(() => import("@/components/Select"));
+const DataTable = lazy(() => import("@/components/DataTable"));
 
 import moment from "moment/moment";
 import "moment/locale/es";
@@ -21,22 +20,11 @@ const List = () => {
   const token = useAuthStore((state) => state.token);
   const saleList = useSaleStore((state) => state.saleList);
   const handleSaleList = useSaleStore((state) => state.handleSaleList);
-  const {
-    toggleModalSide,
-    handleModalType,
-    toggleModal,
-    handleToggleModal,
-    handleToggleModalSide,
-    handleToggleSelect,
-  } = useToggleStore(
-    useShallow((state) => ({
-      toggleModalSide: state.toggleModalSide,
-      handleModalType: state.handleModalType,
-      toggleModal: state.toggleModal,
-      handleToggleModal: state.handleToggleModal,
-      handleToggleModalSide: state.handleToggleModalSide,
-      handleToggleSelect: state.handleToggleSelect,
-    }))
+  const toggleSidebar = useToggleStore((state) => state.toggleSidebar);
+  const toggleModal = useToggleStore((state) => state.toggleModal);
+  const handleToggleModal = useToggleStore((state) => state.handleToggleModal);
+  const handleToggleSelect = useToggleStore(
+    (state) => state.handleToggleSelect
   );
 
   const [loading, setLoading] = useState({});
@@ -55,34 +43,34 @@ const List = () => {
   const columnHelper = createColumnHelper();
 
   const columns = [
-    {
-      id: "select",
-      header: ({ table }) => (
-        <IndeterminateCheckbox
-          {...{
-            checked: table.getIsAllRowsSelected(),
-            indeterminate: table.getIsSomeRowsSelected(),
-            onChange: table.getToggleAllRowsSelectedHandler(),
-          }}
-        />
-      ),
-      cell: ({ row }) => (
-        <div className="px-1">
-          <IndeterminateCheckbox
-            {...{
-              checked: row.getIsSelected(),
-              disabled: !row.getCanSelect(),
-              indeterminate: row.getIsSomeSelected(),
-              onChange: row.getToggleSelectedHandler(),
-            }}
-          />
-        </div>
-      ),
-    },
-    columnHelper.accessor("customer", {
+    // {
+    //   id: "select",
+    //   header: ({ table }) => (
+    //     <IndeterminateCheckbox
+    //       {...{
+    //         checked: table.getIsAllRowsSelected(),
+    //         indeterminate: table.getIsSomeRowsSelected(),
+    //         onChange: table.getToggleAllRowsSelectedHandler(),
+    //       }}
+    //     />
+    //   ),
+    //   cell: ({ row }) => (
+    //     <div className="px-1">
+    //       <IndeterminateCheckbox
+    //         {...{
+    //           checked: row.getIsSelected(),
+    //           disabled: !row.getCanSelect(),
+    //           indeterminate: row.getIsSomeSelected(),
+    //           onChange: row.getToggleSelectedHandler(),
+    //         }}
+    //       />
+    //     </div>
+    //   ),
+    // },
+    columnHelper.accessor("customerId.email", {
       header: "Cliente",
     }),
-    columnHelper.accessor("payment_method", {
+    columnHelper.accessor("payment_method.name", {
       header: "Metodo de pago",
     }),
     columnHelper.accessor("products", {
@@ -114,31 +102,33 @@ const List = () => {
             <span className="sr-only">Open menu</span>
           </button>
           <div className="absolute top-[-50px] left-[-65px]">
-            <Select
-              actions={[
-                {
-                  name: "Detalles",
-                  func: "modal",
-                  type: "details-sale",
-                  data: row.original,
-                },
-                {
-                  name: "Editar",
-                  func: "modal",
-                  type: "edit-sale",
-                  data: row.original,
-                },
-                {
-                  name: "Eliminar",
-                  func: "modalDelete",
-                  type: "delete-sale",
-                  data: row.original,
-                },
-              ]}
-              id={row.original._id}
-              rowIndex={row.index}
-              totalRows={table.getRowModel().rows.length}
-            />
+            <Suspense fallback={""}>
+              <Select
+                actions={[
+                  {
+                    name: "Detalles",
+                    func: "modal",
+                    type: "details-sale",
+                    data: row.original,
+                  },
+                  {
+                    name: "Editar",
+                    func: "modal",
+                    type: "edit-sale",
+                    data: row.original,
+                  },
+                  {
+                    name: "Eliminar",
+                    func: "modalDelete",
+                    type: "delete-sale",
+                    data: row.original,
+                  },
+                ]}
+                id={row.original._id}
+                rowIndex={row.index}
+                totalRows={table.getRowModel().rows.length}
+              />
+            </Suspense>
           </div>
         </div>
       ),
@@ -146,7 +136,13 @@ const List = () => {
   ];
 
   return (
-    <section className="w-full h-full px-[20px] flex justify-center items-start">
+    <section
+      className={`${
+        toggleSidebar
+          ? "lg:w-[74vw] xl:w-[79.2vw] min-[90rem]:w-[81.5vw] 2xl:w-[82.5vw] mt-[0px] px-[10px]"
+          : "lg:w-[90.5vw] xl:w-[92.3vw] min-[90rem]:w-[93.15vw] 2xl:w-[93.45vw] px-[10px]"
+      } px-[20px] flex justify-center items-start`}
+    >
       <Suspense fallback={""}>
         <DataTable
           data={saleList || []}

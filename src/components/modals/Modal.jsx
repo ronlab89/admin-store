@@ -1,33 +1,39 @@
-import { useShallow } from "zustand/react/shallow";
-
-import { useToggleStore } from "@/store/toggle.store";
 import { lazy, Suspense } from "react";
 
-const Form = lazy(() => import("@/components/Form"));
+import { useToggleStore } from "@/store/toggle.store";
+
+const Form = lazy(() => import("@/components/forms/Form"));
+const CreateEditEmployee = lazy(() =>
+  import("@/components/forms/CreateEditEmployee")
+);
+const CreateEditSupplier = lazy(() =>
+  import("@/components/forms/CreateEditSupplier")
+);
+const CreateEditCustomer = lazy(() =>
+  import("@/components/forms/CreateEditCustomer")
+);
+const CreateEditProduct = lazy(() =>
+  import("@/components/forms/CreateEditProduct")
+);
+const Ticket = lazy(() => import("@/components/purchases/Ticket"));
+const Details = lazy(() => import("@/components/inventory/Details"));
+
 const X = lazy(() => import("@/icons/X"));
-const CreateEditEmployee = lazy(() => import("../forms/CreateEditEmployee"));
-const CreateEditSupplier = lazy(() => import("../forms/CreateEditSupplier"));
-const CreateEditCustomer = lazy(() => import("../forms/CreateEditCustomer"));
-const CreateEditProduct = lazy(() => import("../forms/CreateEditProduct"));
-const CreateEditSale = lazy(() => import("../forms/CreateEditSale"));
 
 const Modal = () => {
-  const { toggleSidebar, toggleModal, handleToggleModal, modalType } =
-    useToggleStore(
-      useShallow((state) => ({
-        toggleSidebar: state.toggleSidebar,
-        toggleModal: state.toggleModal,
-        handleToggleModal: state.handleToggleModal,
-        modalType: state.modalType,
-      }))
-    );
+  const toggleSidebar = useToggleStore((state) => state.toggleSidebar);
+  const toggleModal = useToggleStore((state) => state.toggleModal);
+  const handleToggleModal = useToggleStore((state) => state.handleToggleModal);
+  const modalType = useToggleStore((state) => state.modalType);
+  const handleModalType = useToggleStore((state) => state.handleModalType);
+  const handleData = useToggleStore((state) => state.handleData);
 
   return (
     <section
       className={`${
         toggleSidebar
-          ? "w-[84.5vw] min-h-[100vh] ml-[240px] mt-[60px] "
-          : "w-[95.5vw] min-h-[100vh] ml-[72px] mt-[60px]"
+          ? "lg:ml-[240px] lg:w-[76.5vw] xl:w-[81.2vw] min-[90rem]:w-[83.5vw] 2xl:w-[84.5vw] mt-[60px] "
+          : "lg:ml-[72px] lg:w-[92.9vw] xl:w-[94.3vw] min-[90rem]:w-[95.15vw] 2xl:w-[95.45vw] min-h-[100vh] mt-[60px]"
       } ${
         toggleModal
           ? "top-[0px] left-[0px]"
@@ -41,6 +47,8 @@ const Modal = () => {
       <span
         onClick={() => {
           handleToggleModal(!toggleModal);
+          handleModalType("");
+          handleData(null);
         }}
         className="absolute left-4 top-2 cursor-pointer border-0 w-8 h-8 flex justify-center items-center rounded-full bg-slate-200 dark:bg-slate-800 z-[70]"
       >
@@ -69,9 +77,13 @@ const Modal = () => {
         <Suspense fallback={""}>
           <CreateEditCustomer />
         </Suspense>
-      ) : modalType === "edit-sale" || modalType === "create-sale" ? (
+      ) : modalType === "edit-purchase" ? (
         <Suspense fallback={""}>
-          <CreateEditSale />
+          <Ticket />
+        </Suspense>
+      ) : modalType === "inventory-details" ? (
+        <Suspense fallback={""}>
+          <Details />
         </Suspense>
       ) : modalType === "login" ? (
         <Suspense fallback={""}>

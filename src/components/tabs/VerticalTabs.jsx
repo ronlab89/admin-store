@@ -1,22 +1,24 @@
 import { lazy, Suspense, useEffect, useState } from "react";
-import InputText from "@/components/InputText";
-import Letter from "@/icons/Letter";
 import { useForm } from "react-hook-form";
-import { formValidate } from "@/utils/formValidate";
-const Loader = lazy(() => import("@/components/Loader"));
-import Dots from "@/icons/Dots";
-import Select from "@/components/Select";
+
 import { useToggleStore } from "@/store/toggle.store";
-import { useShallow } from "zustand/shallow";
+
+import { formValidate } from "@/utils/formValidate";
+
+import InputText from "@/components/InputText";
+import Select from "@/components/Select";
 import Button from "@/components/Button";
+const Loader = lazy(() => import("@/components/Loader"));
+
+import Letter from "@/icons/Letter";
+import Dots from "@/icons/Dots";
 import Save from "@/icons/Save";
 
 const VerticalTabs = ({ data, list, icon, type, createMethod, editMethod }) => {
-  const { handleToggleSelect } = useToggleStore(
-    useShallow((state) => ({
-      handleToggleSelect: state.handleToggleSelect,
-    }))
+  const handleToggleSelect = useToggleStore(
+    (state) => state.handleToggleSelect
   );
+
   const [activeTab, setActiveTab] = useState(data[0].id);
   const [activeSubTab, setActiveSubTab] = useState(data[0].subcategories[0].id);
   const [inputValue, setInputValue] = useState({
@@ -24,7 +26,6 @@ const VerticalTabs = ({ data, list, icon, type, createMethod, editMethod }) => {
     description: data[0].subcategories[0].description,
   });
   const [isEdit, setIsEdit] = useState({ status: false, id: null, data: null });
-
   const [loading, setLoading] = useState({});
   const [errorAxios, setErrorAxios] = useState(null);
 
@@ -68,7 +69,7 @@ const VerticalTabs = ({ data, list, icon, type, createMethod, editMethod }) => {
 
   return (
     <div className="md:flex">
-      <ul className="w-[20%] flex-column space-y space-y-4 text-sm font-medium text-gray-500 dark:text-gray-400 md:me-4 mb-4 md:mb-0">
+      <ul className="w-[20%] flex-column space-y space-y-2 xl:space-y-4 text-sm font-medium text-gray-500 dark:text-gray-400 xl:me-4 mb-4 md:mb-0">
         {data.map((item) => (
           <li
             key={item?.id}
@@ -82,7 +83,7 @@ const VerticalTabs = ({ data, list, icon, type, createMethod, editMethod }) => {
                         rounded-[.5rem] active w-full hover:transition-colors`}
             aria-current="page"
           >
-            {icon}
+            <span className="hidden xl:block">{icon}</span>
             {item?.name}
           </li>
         ))}
@@ -94,7 +95,7 @@ const VerticalTabs = ({ data, list, icon, type, createMethod, editMethod }) => {
           encuentras la opción que buscas, selecciona Personalizado para crear
           una nueva categoría.
         </p>
-        <div className="flex flex-wrap justify-start gap-6">
+        <div className="flex flex-wrap justify-start gap-2 xl:gap-4 min-[90rem]:gap-6">
           {data
             .filter((tab) => tab.id === activeTab)[0]
             .subcategories.map((item) => (
@@ -107,7 +108,7 @@ const VerticalTabs = ({ data, list, icon, type, createMethod, editMethod }) => {
                     description: item.description,
                   });
                 }}
-                className={`w-[150px] h-[40px] cursor-pointer text-xs border-2 rounded-[.5rem] flex justify-center items-center gap-2
+                className={`w-[140px] h-[30px] xl:w-[150px] xl:h-[40px] cursor-pointer text-xs border-2 rounded-[.5rem] flex justify-center items-center gap-2
                         ${
                           activeSubTab === item.id
                             ? "text-teal-600 hover:text-teal-600 dark:text-teal-400 dark:hover:text-teal-400 border-teal-600 dark:border-teal-400"
@@ -119,7 +120,7 @@ const VerticalTabs = ({ data, list, icon, type, createMethod, editMethod }) => {
               </div>
             ))}
         </div>
-        <div className="w-full h-full px-6 flex flex-col items-start">
+        <div className="w-full h-full px-0 xl:px-6 flex flex-col items-start">
           <div className="w-full h-fit px-0 py-10 ">
             <form
               onSubmit={handleSubmit(onRegister)}
@@ -210,10 +211,11 @@ const VerticalTabs = ({ data, list, icon, type, createMethod, editMethod }) => {
                 type={"submit"}
                 styles={"cursor-pointer mt-5"}
                 mode={"form"}
+                variant={""}
               />
             </form>
           </div>
-          <p className="text-sm font-medium">
+          <p className="text-sm font-medium mb-2">
             {type === "product-category"
               ? "Lista de categorias de productos creadas"
               : type === "payment-method"
@@ -300,9 +302,9 @@ const VerticalTabs = ({ data, list, icon, type, createMethod, editMethod }) => {
                   <div
                     className={`absolute ${
                       index === 0
-                        ? "top-0 left-[50px]"
-                        : "top-[-40px] left-[50px]"
-                    }`}
+                        ? "top-0 left-[-30px] xl:left-[50px]"
+                        : "top-[-40px] left-[-30px] xl:left-[50px]"
+                    } z-50`}
                   >
                     <Select
                       actions={[
@@ -331,7 +333,9 @@ const VerticalTabs = ({ data, list, icon, type, createMethod, editMethod }) => {
         </div>
       </article>
       {loading.createProductCategory || loading.editProductCategory ? (
-        <Loader type={""} />
+        <Suspense fallback={""}>
+          <Loader type={""} />
+        </Suspense>
       ) : null}
     </div>
   );

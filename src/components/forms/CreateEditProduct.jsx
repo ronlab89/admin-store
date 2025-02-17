@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from "react";
-import Heading from "@/components/Heading";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+
+import { useAuthStore } from "@/store/auth.store";
+import { useToggleStore } from "@/store/toggle.store";
+import { useProductCategoryStore } from "@/store/productCategory.store";
+import { useSupplierStore } from "@/store/supplier.store";
+import { useProductStore } from "@/store/product.store";
+
 import { formValidate } from "@/utils/formValidate";
-import User from "@/icons/User";
-import Password from "@/icons/Password";
+import { createProduct, updateProduct } from "@/utils/productMethods";
+
+import Heading from "@/components/Heading";
 import Button from "@/components/Button";
 import InputText from "@/components/InputText";
 import InputSelect from "@/components/InputSelect";
-import { onSubmitEdit, onSubmitRegister } from "../../utils/authMethods";
-import { useAuthStore } from "@/store/auth.store";
-import { useToggleStore } from "@/store/toggle.store";
-import { useUserStore } from "@/store/user.store";
 import Loader from "@/components/Loader";
+
 import Letter from "@/icons/Letter";
-import { useProductCategoryStore } from "@/store/productCategory";
-import { useSupplierStore } from "@/store/supplier.store";
 import Sale from "@/icons/Sale";
-import { createProduct, updateProduct } from "../../utils/productMethods";
-import { useProductStore } from "../../store/product.store";
 
 const CreateEditProduct = () => {
   const token = useAuthStore((state) => state.token);
@@ -26,8 +26,6 @@ const CreateEditProduct = () => {
   const handleToggleModal = useToggleStore((state) => state.handleToggleModal);
   const modalType = useToggleStore((state) => state.modalType);
   const data = useToggleStore((state) => state.data);
-  const userList = useUserStore((state) => state.userList);
-  const handleUserList = useUserStore((state) => state.handleUserList);
   const supplierList = useSupplierStore((state) => state.supplierList);
   const productCategoryList = useProductCategoryStore(
     (state) => state.productCategoryList
@@ -104,17 +102,17 @@ const CreateEditProduct = () => {
             : "Registrar producto"}
         </span>
       </Heading>
-      <article className="w-full h-full pt-20 px-[40px]">
+      <article className="w-full min-h-screen h-screen max-h-full pt-5 min-[90rem]:px-[40px] overflow-x-hidden overflow-y-auto pb-[200px]">
         <form
           onSubmit={
             modalType === "edit-product"
               ? handleSubmit(onEdit)
               : handleSubmit(onRegister)
           }
-          className="grid grid-cols-1 md:grid-cols-3 place-items-center gap-10"
+          className="grid grid-cols-1 md:grid-cols-3 place-items-center gap-3 min-[90rem]:gap-4"
           noValidate
         >
-          <div className="w-full col-span-1">
+          <div className="w-[80%] xl:w-[90%] min-[90rem]:w-[95%] 2xl:w-full col-span-1">
             <InputText
               icon={<Letter width={16} height={16} styles={""} />}
               type={"text"}
@@ -132,7 +130,7 @@ const CreateEditProduct = () => {
               errorId={errors.name}
             />
           </div>
-          <div className="w-full col-span-1 md:col-span-2">
+          <div className="w-[90%] xl:w-[95%] min-[90rem]:w-[100%] 2xl:w-full col-span-1 md:col-span-2">
             <InputText
               icon={<Letter width={16} height={16} styles={""} />}
               type={"text"}
@@ -152,7 +150,7 @@ const CreateEditProduct = () => {
               errorId={errors.description}
             />
           </div>
-          <div className="w-full col-span-1">
+          <div className="w-[80%] xl:w-[90%] min-[90rem]:w-[95%] 2xl:w-full col-span-1">
             <InputText
               icon={<Sale width={16} height={16} styles={""} />}
               type={"number"}
@@ -172,7 +170,7 @@ const CreateEditProduct = () => {
               errorId={errors.price}
             />
           </div>
-          <div className="w-full col-span-1">
+          <div className="w-[80%] xl:w-[90%] min-[90rem]:w-[95%] 2xl:w-full col-span-1">
             <InputSelect
               icon={""}
               id={"category"}
@@ -196,7 +194,7 @@ const CreateEditProduct = () => {
               errorId={errors.category}
             />
           </div>
-          <div className="w-full col-span-1">
+          <div className="w-[80%] xl:w-[90%] min-[90rem]:w-[95%] 2xl:w-full col-span-1">
             <InputSelect
               icon={""}
               id={"supplier"}
@@ -221,13 +219,14 @@ const CreateEditProduct = () => {
             />
           </div>
 
-          <div className="w-full col-span-1 md:col-span-2 flex justify-start items-start gap-10">
+          <div className="w-full col-span-1 md:col-span-2 flex justify-start items-start lg:ml-[50px] xl:ml-[35px] min-[90rem]:ml-[20px] 2xl:ml-0 mt-5">
             <Button
               text={modalType === "edit-product" ? "Actualizar" : "Registrar"}
               icon={""}
               type={"submit"}
               styles={"cursor-pointer"}
               mode={"form"}
+              variant={""}
             />
           </div>
         </form>

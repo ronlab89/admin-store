@@ -1,33 +1,32 @@
+import { lazy, Suspense, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+
+import { useAuthStore } from "@/store/auth.store";
+import { useToggleStore } from "@/store/toggle.store";
+
+import { formValidate } from "@/utils/formValidate";
+import { onSubmitLogin } from "@/utils/authMethods";
+
 import Heading from "@/components/Heading";
 import Button from "@/components/Button";
 import InputText from "@/components/InputText";
-import { useForm } from "react-hook-form";
-import { formValidate } from "@/utils/formValidate";
-import User from "../icons/User";
-import Password from "../icons/Password";
-import { useState } from "react";
-import Loader from "@/components/Loader";
-import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "@/store/auth.store";
-import { useShallow } from "zustand/react/shallow";
-import { onSubmitLogin } from "../utils/authMethods";
+const Loader = lazy(() => import("@/components/Loader"));
+
+import User from "@/icons/User";
+import Password from "@/icons/Password";
 
 const Form = () => {
-  const { user, token, handlelogin, handleuser } = useAuthStore(
-    useShallow((state) => ({
-      user: state.user,
-      token: state.token,
-      handlelogin: state.handlelogin,
-      handleuser: state.handleuser,
-    }))
-  );
+  const handlelogin = useAuthStore((state) => state.handlelogin);
+  const handleuser = useAuthStore((state) => state.handleuser);
+  const toggleShow = useToggleStore((state) => state.toggleShow);
+
   const [loading, setLoading] = useState({});
   const [errorLogin, setErrorLogin] = useState(null);
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
   } = useForm({
     defaultValues: {
       email: "",
@@ -51,9 +50,13 @@ const Form = () => {
 
   return (
     <section className="w-full h-full z-10">
-      {loading.login ? <Loader type={""} /> : null}
+      {loading.login ? (
+        <Suspense fallback={""}>
+          <Loader type={""} />
+        </Suspense>
+      ) : null}
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        <div className="w-full h-[50%] bg-slate-200 rounded-[20px] shadow-sm dark:border md:mt-0 sm:max-w-lg xl:p-0 dark:bg-slate-800 dark:border-gray-700">
+        <div className="w-full h-[50%] bg-slate-200 rounded-[.5rem] shadow-sm dark:border md:mt-0 sm:max-w-lg xl:p-0 dark:bg-slate-800 dark:border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
             <Heading
               type="h2"
@@ -79,13 +82,17 @@ const Form = () => {
                 {...register("email", {
                   required,
                   validate: validateTrim,
+                  pattern: patternEmail,
                 })}
                 errorId={errors.email}
               />
-
               <InputText
                 icon={<Password width={16} height={16} styles={""} />}
-                type={"password"}
+                type={
+                  toggleShow.status && toggleShow.id === "password"
+                    ? "text"
+                    : "password"
+                }
                 text={"Contraseña"}
                 placeholder={"Escribe la contraseña registrada"}
                 name={"password"}
@@ -95,6 +102,7 @@ const Form = () => {
                 {...register("password", {
                   required,
                   validate: validateTrim,
+                  minLength: minLength,
                 })}
                 errorId={errors.password}
               />
@@ -104,6 +112,7 @@ const Form = () => {
                 type={"submit"}
                 styles={"cursor-pointer"}
                 mode={"form"}
+                variant={""}
               />
             </form>
           </div>

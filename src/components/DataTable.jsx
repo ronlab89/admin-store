@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useShallow } from "zustand/react/shallow";
 import {
   useReactTable,
   getCoreRowModel,
@@ -11,14 +10,11 @@ import {
 } from "@tanstack/react-table";
 
 import { useToggleStore } from "@/store/toggle.store";
-import { useMenuStore } from "@/store/menu.store";
 
 import Button from "@/components/Button";
-// import Popover from "@/components/Popover";
 import Search from "@/Icons/Search";
 import Filter from "@/Icons/Filter";
 import Create from "@/Icons/Create";
-import Batch from "@/Icons/Batch";
 import Reload from "@/Icons/Reload";
 import Angles from "@/Icons/Angles";
 import Angle from "@/Icons/Angle";
@@ -34,27 +30,13 @@ const DataTable = ({
   createTypeModal,
   sideType,
   filter,
+  search,
 }) => {
-  const {
-    toggleSidebar,
-    handleModalType,
-    handleTogglePop,
-    handleModalSideType,
-  } = useToggleStore(
-    useShallow((state) => ({
-      toggleSidebar: state.toggleSidebar,
-      handleModalType: state.handleModalType,
-      handleTogglePop: state.handleTogglePop,
-      handleModalSideType: state.handleModalSideType,
-    }))
-  );
-
-  const { linkId, handleLinkId, handleSubLinkId } = useMenuStore(
-    useShallow((state) => ({
-      linkId: state.linkId,
-      handleLinkId: state.handleLinkId,
-      handleSubLinkId: state.handleSubLinkId,
-    }))
+  const toggleSidebar = useToggleStore((state) => state.toggleSidebar);
+  const handleModalType = useToggleStore((state) => state.handleModalType);
+  const handleTogglePop = useToggleStore((state) => state.handleTogglePop);
+  const handleModalSideType = useToggleStore(
+    (state) => state.handleModalSideType
   );
 
   const [sorting, setSorting] = useState([]);
@@ -91,38 +73,43 @@ const DataTable = ({
     enableRowSelection: true,
   });
 
+  // Selected rows
   // useEffect(() => {
-  //   handleOrdersBatch(table.getSelectedRowModel().rows.map((x) => x.original));
+  //   handleDataRows(table.getSelectedRowModel().rows.map((x) => x.original));
   // }, [table.getSelectedRowModel()]);
 
   return (
     <section
       className={`${
-        !toggleSidebar ? "w-[94vw]" : "w-[84vw]"
+        toggleSidebar
+          ? "lg:w-[74vw] xl:w-[79vw] min-[90rem]:w-[81.2vw] 2xl:w-[84.5vw]"
+          : "lg:w-[90vw] xl:w-[92vw] min-[90rem]:w-[93vw] 2xl:w-[93vw]"
       } min-h-[80vh] max-h-full p-2 text-sm relative z-10`}
     >
       <article className="flex justify-between items-center">
         <div className="flex justify-start items-center gap-4">
           {/* Input search */}
-          <div className="relative w-[300px]">
-            <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-              <Search
-                width={15}
-                height={15}
-                styles={"text-slate-800 dark:text-slate-200"}
+          {search === null ? null : (
+            <div className="relative w-[300px]">
+              <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                <Search
+                  width={15}
+                  height={15}
+                  styles={"text-slate-800 dark:text-slate-200"}
+                />
+              </div>
+              <input
+                type="search"
+                value={filtering}
+                onChange={(e) => setFiltering(e.target.value)}
+                id="default-search"
+                className="ps-10 text-sm mb-0 flex pl-12 h-9 w-full rounded-[.5rem] border border-slate-800 dark:border-slate-200 border-input bg-transparent px-3 py-1 shadow-sm transition-colors font-medium text-slate-800 dark:text-slate-200 placeholder:text-slate-600 dark:placeholder:text-slate-400 placeholder:font-normal focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#a1a1aa] dark:focus-visible:ring-[#d4d4d8] disabled:cursor-not-allowed disabled:opacity-50
+              "
+                placeholder="Busqueda"
+                required
               />
             </div>
-            <input
-              type="search"
-              value={filtering}
-              onChange={(e) => setFiltering(e.target.value)}
-              id="default-search"
-              className="ps-10 text-sm mb-0 flex pl-12 h-9 w-full rounded-[20px] border border-slate-800 dark:border-slate-200 border-input bg-transparent px-3 py-1 shadow-sm transition-colors font-medium text-slate-800 dark:text-slate-200 placeholder:text-slate-600 dark:placeholder:text-slate-400 placeholder:font-normal focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#a1a1aa] dark:focus-visible:ring-[#d4d4d8] disabled:cursor-not-allowed disabled:opacity-50
-              "
-              placeholder="Busqueda"
-              required
-            />
-          </div>
+          )}
           {/* Filters */}
           {filter ? (
             <Button
@@ -134,7 +121,7 @@ const DataTable = ({
                 create(!boolean);
               }}
               mode={"default"}
-              variant={"outline"}
+              variant={"datatable"}
               styles={""}
             />
           ) : null}
@@ -152,7 +139,7 @@ const DataTable = ({
                 create(!boolean);
               }}
               mode={"default"}
-              variant={"outline"}
+              variant={"datatable"}
               styles={""}
             />
           ) : null}
@@ -168,41 +155,39 @@ const DataTable = ({
             }`}
           ></div>
           {/* Reload */}
-
-          <Button
-            text={"Recargar"}
-            icon={<Reload width={14} height={14} styles={"ml-2"} />}
-            iconPosition={"right"}
-            reverse={false}
-            onClick={reload}
-            mode={"default"}
-            variant={"outline"}
-            styles={""}
-          />
+          {reload === null ? null : (
+            <Button
+              text={"Recargar"}
+              icon={<Reload width={12} height={12} styles={"ml-2"} />}
+              iconPosition={"right"}
+              reverse={false}
+              onClick={reload}
+              mode={"default"}
+              variant={"datatable"}
+              styles={""}
+            />
+          )}
         </div>
       </article>
       {/* Table */}
-      <table
-        className={`w-full h-full rounded-[0rem] overflow-hidden mt-10 z-10`}
-      >
+      <table className={`w-full h-full overflow-hidden mt-10 z-10`}>
         <thead
-          className={`text-center rounded-[0rem] font-medium tracking-[0.01rem] z-10`}
+          className={`text-center font-medium tracking-[0.01rem] z-10 bg-slate-200 dark:bg-slate-800`}
         >
           {table.getHeaderGroups().map((headerGroup) => (
             <tr
               key={headerGroup.id}
-              className={`w-full tex-center rounded-[0rem] border border-slate-300 dark:border-slate-700`}
+              className={`w-full tex-center border border-slate-300 dark:border-slate-700`}
             >
               {headerGroup.headers.map((header, index) => (
                 <th
                   key={header.id}
                   colSpan={header.colSpan}
                   onClick={header.column.getToggleSortingHandler()}
-                  className={`text-center py-3 rounded-[0rem] ${
+                  className={`text-center py-3 ${
                     index === 0
-                      ? "rounded-tl-[0rem]"
-                      : index === headerGroup.headers.length - 1 &&
-                        "rounded-tr-[0rem]"
+                      ? ""
+                      : index === headerGroup.headers.length - 1 && ""
                   }`}
                 >
                   {header.isPlaceholder
@@ -360,12 +345,6 @@ const DataTable = ({
           </div>
         </div>
       </article>
-      <div>
-        {/* {console.log(
-          "FIlas seleccionadas: ",
-          table.getSelectedRowModel().rows.map((x) => x.original)
-        )} */}
-      </div>
     </section>
   );
 };

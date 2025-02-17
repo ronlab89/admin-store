@@ -18,6 +18,8 @@ const getUserLogged = async ({ tokenlogin, handleuser, handlelogin }) => {
         name: data.name,
         surname: data.surname,
         email: data.email,
+        phone: data.phone,
+        address: data.address,
         role: data.role,
         events_history: data.events_history,
       });
@@ -164,8 +166,11 @@ const logout = async ({
   navigate,
   resetAuth,
   resetCustomer,
+  resetExpenseCategory,
   resetMenu,
+  resetPaymentMethod,
   resetProduct,
+  resetSale,
   resetSupplier,
   resetToggles,
   resetUser,
@@ -179,8 +184,11 @@ const logout = async ({
     if (res.status === 200) {
       resetAuth();
       resetCustomer();
+      resetExpenseCategory();
       resetMenu();
+      resetPaymentMethod();
       resetProduct();
+      resetSale();
       resetSupplier();
       resetToggles();
       resetUser();

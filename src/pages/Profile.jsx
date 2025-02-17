@@ -1,11 +1,12 @@
-import React from "react";
-import Heading from "@/components/Heading";
-import User from "@/icons/User";
 import { useUserStore } from "@/store/user.store";
-import Phone from "@/icons/Phone";
-import EditUser from "@/icons/EditUser";
 import { useToggleStore } from "@/store/toggle.store";
 import { useAuthStore } from "@/store/auth.store";
+
+import Heading from "@/components/Heading";
+
+import User from "@/icons/User";
+import Phone from "@/icons/Phone";
+import EditUser from "@/icons/EditUser";
 import Email from "@/icons/Email";
 import Location from "@/icons/Location";
 import Map from "@/icons/Map";
@@ -14,24 +15,32 @@ import Calendar from "@/icons/Calendar";
 
 import moment from "moment/moment";
 import "moment/locale/es";
+import ChartRadialBar from "../components/dashboard/ChartRadialBar";
+import ChartLine from "../components/dashboard/ChartLine";
 
 const Profile = () => {
   const dataProfile = useUserStore((state) => state.dataProfile);
   const toggleModal = useToggleStore((state) => state.toggleModal);
   const handleToggleModal = useToggleStore((state) => state.handleToggleModal);
-  const modalType = useToggleStore((state) => state.modalType);
   const handleModalType = useToggleStore((state) => state.handleModalType);
   const handleData = useToggleStore((state) => state.handleData);
   const user = useAuthStore((state) => state.user);
+  const toggleSidebar = useToggleStore((state) => state.toggleSidebar);
 
   return (
-    <section className="min-w-screen max-w-screen min-h-screen max-h-screen overflow-hidden px-[40px]">
+    <section
+      className={`${
+        toggleSidebar
+          ? "lg:w-[76.5vw] xl:w-[81.2vw] min-[90rem]:w-[83.5vw] 2xl:w-[84.5vw] mt-[0px] px-[20px]"
+          : "lg:w-[92.9vw] xl:w-[94.3vw] min-[90rem]:w-[95.15vw] 2xl:w-[95.45vw] px-[20px]"
+      } overflow-hidden px-[40px]`}
+    >
       <Heading type={"h3"} className={"text-start"}>
         Perfil
       </Heading>
-      <section className="w-full h-full flex justify-between items-start pt-10 text-sm">
-        <article className="w-[30%] h-full pt-0 flex flex-col border-r-2 pr-10 border-slate-200 dark:border-slate-800">
-          <div className="w-full flex justify-start items-end gap-10 mb-5">
+      <section className="w-full h-full flex justify-between items-start pt-10 text-xs xl:text-sm gap-5">
+        <article className="w-[30%] h-full pt-0 flex flex-col border-r-2 pr-5 xl:pr-10 border-slate-200 dark:border-slate-800">
+          <div className="relative w-full flex justify-start items-end gap-2 2xl:gap-10 mb-5">
             <div className="w-[60px] h-[60px] rounded-[.5rem] bg-teal-600 dark:bg-teal-600 flex justify-center items-center">
               <User width={50} height={50} styles={""} />
             </div>
@@ -43,7 +52,7 @@ const Profile = () => {
             </div>
             {dataProfile?.type !== "loggued" ? null : (
               <span
-                className="cursor-pointer ml-auto text-slate-800 dark:text-slate-200 hover:text-teal-600 dark:hover:text-teal-400 hover:transition-colors"
+                className="cursor-pointer absolute top-0 right-0 text-slate-800 dark:text-slate-200 hover:text-teal-600 dark:hover:text-teal-400 hover:transition-colors"
                 onClick={() => {
                   handleToggleModal(!toggleModal);
                   handleModalType("edit");
@@ -96,8 +105,13 @@ const Profile = () => {
             </p>
           </div>
         </article>
-        <article className="w-[70%] h-full pt-20 flex justify-center items-center">
-          Metricas
+        <article className="w-[70%] min-h-[50vh] h-screen max-h-full overflow-x-hidden overflow-y-auto flex flex-col justify-center items-center gap-5 pb-[200px]">
+          <div className="w-full lg:h-[250px] xl:h-[350px] bg-slate-200 dark:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-[.5rem] shadow">
+            <ChartRadialBar />
+          </div>
+          <div className="w-full lg:h-[250px] xl:h-[350px] bg-slate-200 dark:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-[.5rem] shadow">
+            <ChartLine />
+          </div>
         </article>
       </section>
     </section>

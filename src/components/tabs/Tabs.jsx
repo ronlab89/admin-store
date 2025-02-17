@@ -1,4 +1,4 @@
-import React, { Children, useState } from "react";
+import React, { useState } from "react";
 
 const Tabs = ({ tabs, content }) => {
   const [activeTab, setActiveTab] = useState(tabs[0].id);

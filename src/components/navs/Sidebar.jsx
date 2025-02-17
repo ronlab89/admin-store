@@ -1,12 +1,8 @@
-import { lazy, Suspense } from "react";
-import { useShallow } from "zustand/react/shallow";
-
-import { useMenuStore } from "@/store/menu.store";
 import { useToggleStore } from "@/store/toggle.store";
 
 import LinkMenu from "@/components/navs/LinkMenu";
-
 import Logo from "@/components/Logo";
+
 import Insights from "@/icons/Insights";
 import Inventory from "@/icons/Inventory";
 import Product from "@/icons/Product";
@@ -18,16 +14,9 @@ import Balance from "@/icons/Balance";
 import Employees from "@/icons/Employees";
 
 const Sidebar = () => {
-  const { linkId } = useMenuStore(
-    useShallow((state) => ({
-      linkId: state.linkId,
-    }))
-  );
-  const { toggleSidebar, handleToggleSidebar } = useToggleStore(
-    useShallow((state) => ({
-      toggleSidebar: state.toggleSidebar,
-      handleToggleSidebar: state.handleToggleSidebar,
-    }))
+  const toggleSidebar = useToggleStore((state) => state.toggleSidebar);
+  const handleToggleSidebar = useToggleStore(
+    (state) => state.handleToggleSidebar
   );
 
   const handleSidebar = () => {
@@ -35,18 +24,7 @@ const Sidebar = () => {
   };
 
   const handleResetData = (id) => {
-    // handleQuote(null);
-    // handleBase64(null);
-    // handleLabel(null);
-    // resetPackages();
-    // handleCitySelected(null);
-    // handleProvinceSelected(null);
-    // handleValidAddress(false);
-    // handleSelectedCarrier(null);
-    // resetProccess();
-    // resetToggles();
-    // resetErrors();
-    // resetBatch();
+    // If you need to reset data, you can use this function
   };
 
   const links = [
@@ -140,28 +118,28 @@ const Sidebar = () => {
       url: "/compras",
       icon: (
         <Purchase
-          width={20}
-          height={20}
+          width={18}
+          height={18}
           styles={`${
-            toggleSidebar ? "w-[20px] h-[20px]" : "w-[25px] h-[25px]"
+            toggleSidebar ? "w-[18px] h-[18px]" : "w-[22px] h-[22px]"
           }`}
         />
       ),
     },
-    {
-      id: "balances",
-      text: "Finanzas",
-      url: "/finanzas",
-      icon: (
-        <Balance
-          width={20}
-          height={20}
-          styles={`${
-            toggleSidebar ? "w-[20px] h-[20px]" : "w-[25px] h-[25px]"
-          }`}
-        />
-      ),
-    },
+    // {
+    //   id: "balances",
+    //   text: "Finanzas",
+    //   url: "/finanzas",
+    //   icon: (
+    //     <Balance
+    //       width={20}
+    //       height={20}
+    //       styles={`${
+    //         toggleSidebar ? "w-[20px] h-[20px]" : "w-[25px] h-[25px]"
+    //       }`}
+    //     />
+    //   ),
+    // },
     {
       id: "employees",
       text: "Empleados",
@@ -212,7 +190,7 @@ const Sidebar = () => {
       </div>
 
       {/* drawer component */}
-      <div
+      <section
         id="drawer-navigation"
         className={`fixed rounded-[.0rem] z-40 w-[240px] h-[100vh] ${
           toggleSidebar ? "px-4" : "px-1"
@@ -224,7 +202,7 @@ const Sidebar = () => {
         tabIndex="-1"
         aria-labelledby="drawer-navigation-label"
       >
-        <div
+        <article
           className={`${
             toggleSidebar ? "justify-start" : "absolute top-[17px] right-[30px]"
           } flex  items-start gap-2 transition-all duration-500`}
@@ -242,10 +220,10 @@ const Sidebar = () => {
           >
             Admin Store
           </span>
-        </div>
-        <div className="mt-[70px]">
+        </article>
+        <article className="mt-[70px]">
           {/* Links */}
-          <article
+          <div
             id="aside-menu"
             className={`w-full min-h-[50vh] h-[80vh] max-h-[100vh] overflow-hidden overflow-y-auto pt-0`}
           >
@@ -267,9 +245,9 @@ const Sidebar = () => {
                 </li>
               ))}
             </ul>
-          </article>
-        </div>
-      </div>
+          </div>
+        </article>
+      </section>
     </>
   );
 };

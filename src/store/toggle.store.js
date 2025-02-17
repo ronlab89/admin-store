@@ -10,6 +10,7 @@ const initialState = {
   toggleSelect: { status: false, id: null },
   toggleAccordeon: { status: false, id: null },
   togglePop: { status: false, id: null },
+  toggleShow: { status: false, id: null },
   modalType: "",
   modalSideType: "",
   data: {},
@@ -65,6 +66,14 @@ export const useToggleStore = create(
           togglePop: {
             status: bool,
             id: id,
+          },
+        })),
+      handleToggleShow: (bool, id) =>
+        set((state) => ({
+          toggleShow: {
+            status:
+              id === state.toggleSelect.id ? !state.toggleSelect.status : bool,
+            id: id === state.toggleSelect.id ? null : id,
           },
         })),
       handleModalType: (type) =>

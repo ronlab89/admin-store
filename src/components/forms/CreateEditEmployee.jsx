@@ -1,17 +1,20 @@
-import React, { useEffect, useState } from "react";
-import Heading from "@/components/Heading";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { formValidate } from "@/utils/formValidate";
-import User from "@/icons/User";
-import Password from "@/icons/Password";
-import Button from "@/components/Button";
-import InputText from "@/components/InputText";
-import InputSelect from "@/components/InputSelect";
-import { onSubmitEdit, onSubmitRegister } from "../../utils/authMethods";
+
 import { useAuthStore } from "@/store/auth.store";
 import { useToggleStore } from "@/store/toggle.store";
 import { useUserStore } from "@/store/user.store";
-import Loader from "@/components/Loader";
+
+import { formValidate } from "@/utils/formValidate";
+import { onSubmitEdit, onSubmitRegister } from "@/utils/authMethods";
+
+import Heading from "@/components/Heading";
+import Button from "@/components/Button";
+import InputText from "@/components/InputText";
+import InputSelect from "@/components/InputSelect";
+const Loader = lazy(() => import("@/components/Loader"));
+
+import Password from "@/icons/Password";
 import Letter from "@/icons/Letter";
 import Email from "@/icons/Email";
 import Location from "@/icons/Location";
@@ -30,6 +33,7 @@ const CreateEditEmployee = () => {
   const userList = useUserStore((state) => state.userList);
   const handleUserList = useUserStore((state) => state.handleUserList);
   const handleDataProfile = useUserStore((state) => state.handleDataProfile);
+  const toggleShow = useToggleStore((state) => state.toggleShow);
 
   const [loading, setLoading] = useState({});
   const [errorAxios, setErrorAxios] = useState(null);
@@ -127,23 +131,23 @@ const CreateEditEmployee = () => {
   }, [loading.registerUser, loading.editUser, toggleModal]);
 
   return (
-    <section className="w-full h-full z-10 p-10">
+    <section className="w-full h-full z-10 p-5 min-[90rem]:p-10">
       <Heading type="h3" variant="" className="font-normal">
         <span>
           {modalType === "edit" ? "Actualizar empleado" : "Registrar empleado"}
         </span>
       </Heading>
-      <article className="w-full h-full pt-5 px-[40px]">
+      <article className="w-full min-h-screen h-screen max-h-full pt-5 min-[90rem]:px-[40px] overflow-x-hidden overflow-y-auto pb-[200px]">
         <form
           onSubmit={
             modalType === "edit"
               ? handleSubmit(onEdit)
               : handleSubmit(onRegister)
           }
-          className="grid grid-cols-1 md:grid-cols-2 place-items-center gap-4"
+          className="grid grid-cols-1 md:grid-cols-2 place-items-center gap-3 min-[90rem]:gap-4"
           noValidate
         >
-          <div className="w-full">
+          <div className="w-[80%] xl:w-[90%] min-[90rem]:w-[95%] 2xl:w-full">
             <InputText
               icon={<Letter width={16} height={16} styles={""} />}
               type={"text"}
@@ -161,7 +165,7 @@ const CreateEditEmployee = () => {
               errorId={errors.name}
             />
           </div>
-          <div className="w-full">
+          <div className="w-[80%] xl:w-[90%] min-[90rem]:w-[95%] 2xl:w-full">
             <InputText
               icon={<Letter width={16} height={16} styles={""} />}
               type={"text"}
@@ -179,7 +183,7 @@ const CreateEditEmployee = () => {
               errorId={errors.surname}
             />
           </div>
-          <div className="w-full">
+          <div className="w-[80%] xl:w-[90%] min-[90rem]:w-[95%] 2xl:w-full">
             <InputText
               icon={<Email width={16} height={16} styles={""} />}
               type={"email"}
@@ -195,11 +199,12 @@ const CreateEditEmployee = () => {
               {...register("email", {
                 required,
                 validate: validateTrim,
+                pattern: patternEmail,
               })}
               errorId={errors.email}
             />
           </div>
-          <div className="w-full">
+          <div className="w-[80%] xl:w-[90%] min-[90rem]:w-[95%] 2xl:w-full">
             <InputText
               icon={<Phone width={16} height={16} styles={""} />}
               type={"text"}
@@ -221,10 +226,14 @@ const CreateEditEmployee = () => {
           </div>
           {modalType === "edit" ? null : (
             <>
-              <div className="w-full">
+              <div className="w-[80%] xl:w-[90%] min-[90rem]:w-[95%] 2xl:w-full">
                 <InputText
                   icon={<Password width={16} height={16} styles={""} />}
-                  type={"password"}
+                  type={
+                    toggleShow.status && toggleShow.id === "password"
+                      ? "text"
+                      : "password"
+                  }
                   text={"Contraseña"}
                   placeholder={"Crea una contraseña segura"}
                   name={"password"}
@@ -233,29 +242,35 @@ const CreateEditEmployee = () => {
                   {...register("password", {
                     required,
                     validate: validateTrim,
+                    minLength: minLength,
                   })}
                   errorId={errors.password}
                 />
               </div>
-              <div className="w-full">
+              <div className="w-[80%] xl:w-[90%] min-[90rem]:w-[95%] 2xl:w-full">
                 <InputText
                   icon={<Password width={16} height={16} styles={""} />}
-                  type={"password"}
+                  type={
+                    toggleShow.status && toggleShow.id === "repassword"
+                      ? "text"
+                      : "password"
+                  }
                   text={"Repite contraseña"}
-                  placeholder={"Vuelve a escribir la contraseña anterior"}
+                  placeholder={"Vuelve a escribir la contraseña"}
                   name={"repassword"}
                   id={"repassword"}
                   error={errors.repassword && "error-input"}
                   {...register("repassword", {
                     required,
                     validate: validateTrim,
+                    minLength: minLength,
                   })}
                   errorId={errors.repassword}
                 />
               </div>
             </>
           )}
-          <div className="w-full">
+          <div className="w-[80%] xl:w-[90%] min-[90rem]:w-[95%] 2xl:w-full">
             <InputSelect
               icon={""}
               id={"role"}
@@ -278,7 +293,7 @@ const CreateEditEmployee = () => {
               errorId={errors.role}
             />
           </div>
-          <div className="w-full">
+          <div className="w-[80%] xl:w-[90%] min-[90rem]:w-[95%] 2xl:w-full">
             <InputText
               icon={<Location width={16} height={16} styles={""} />}
               type={"text"}
@@ -298,7 +313,7 @@ const CreateEditEmployee = () => {
               errorId={errors.addressline}
             />
           </div>
-          <div className="w-full">
+          <div className="w-[80%] xl:w-[90%] min-[90rem]:w-[95%] 2xl:w-full">
             <InputText
               icon={<City width={16} height={16} styles={""} />}
               type={"text"}
@@ -318,7 +333,7 @@ const CreateEditEmployee = () => {
               errorId={errors.city}
             />
           </div>
-          <div className="w-full">
+          <div className="w-[80%] xl:w-[90%] min-[90rem]:w-[95%] 2xl:w-full">
             <InputText
               icon={<Map width={16} height={16} styles={""} />}
               type={"text"}
@@ -338,7 +353,7 @@ const CreateEditEmployee = () => {
               errorId={errors.province}
             />
           </div>
-          <div className="w-full">
+          <div className="w-[80%] xl:w-[90%] min-[90rem]:w-[95%] 2xl:w-full">
             <InputText
               icon={<Map width={16} height={16} styles={""} />}
               type={"text"}
@@ -358,7 +373,7 @@ const CreateEditEmployee = () => {
               errorId={errors.country}
             />
           </div>
-          <div className="w-full col-span-1 md:col-span-2 flex justify-start items-start gap-10">
+          <div className="w-full col-span-1 md:col-span-2 flex justify-start items-start lg:ml-[85px] xl:ml-[55px] min-[90rem]:ml-[30px] 2xl:ml-0 mt-5">
             <Button
               text={modalType === "edit" ? "Actualizar" : "Registrar"}
               icon={""}
@@ -370,7 +385,11 @@ const CreateEditEmployee = () => {
           </div>
         </form>
       </article>
-      {loading.registerUser || loading.editUser ? <Loader type={""} /> : null}
+      {loading.registerUser || loading.editUser ? (
+        <Suspense fallback={""}>
+          <Loader type={""} />
+        </Suspense>
+      ) : null}
     </section>
   );
 };

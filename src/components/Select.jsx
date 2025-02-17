@@ -1,6 +1,7 @@
 import { useShallow } from "zustand/react/shallow";
-import { useToggleStore } from "@/store/toggle.store";
 import { useNavigate } from "react-router-dom";
+
+import { useToggleStore } from "@/store/toggle.store";
 import { useUserStore } from "@/store/user.store";
 
 const Select = ({ actions, id, toggleState, setToggleState }) => {
@@ -76,6 +77,7 @@ const Select = ({ actions, id, toggleState, setToggleState }) => {
                   id: action.data._id,
                   data: action.data,
                 });
+                handleToggleSelect(false, null);
                 return;
               }
               avoid;

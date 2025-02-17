@@ -1,52 +1,42 @@
 import { lazy, Suspense, useEffect, useState } from "react";
-const DataTable = lazy(() => import("@/components/DataTable"));
 import { createColumnHelper } from "@tanstack/react-table";
-import { useShallow } from "zustand/react/shallow";
-import { useToggleStore } from "@/store/toggle.store";
-import IndeterminateCheckbox from "@/components/datatable/IndeterminateCheckbox";
-import { getProductList } from "../utils/productMethods";
-import { useAuthStore } from "../store/auth.store";
-import { useProductStore } from "../store/product.store";
 import io from "socket.io-client";
-import Loader from "@/components/Loader";
+
+import { useToggleStore } from "@/store/toggle.store";
+import { useProductStore } from "@/store/product.store";
+import { useAuthStore } from "@/store/auth.store";
+import { usePurchaseStore } from "@/store/purchase.store";
+import { useSaleStore } from "@/store/sale.store";
+
+import { formatterco } from "@/utils/formatter";
+import { getPurchaseList } from "@/utils/PurchaseMethod";
+import { getSaleList } from "@/utils/saleMethods";
+
+const DataTable = lazy(() => import("@/components/DataTable"));
+const Loader = lazy(() => import("@/components/Loader"));
 import Details from "@/icons/Details";
-
-import { formatterco, formatterus } from "@/utils/formatter";
-
-import moment from "moment/moment";
-import "moment/locale/es";
 
 const Inventory = () => {
   const socket = io(`${import.meta.env.VITE_IO_URL}`);
   const token = useAuthStore((state) => state.token);
   const productList = useProductStore((state) => state.productList);
   const handleProductList = useProductStore((state) => state.handleProductList);
-  const {
-    toggleModalSide,
-    handleModalType,
-    toggleModal,
-    handleToggleModal,
-    handleToggleModalSide,
-  } = useToggleStore(
-    useShallow((state) => ({
-      toggleModalSide: state.toggleModalSide,
-      handleModalType: state.handleModalType,
-      toggleModal: state.toggleModal,
-      handleToggleModal: state.handleToggleModal,
-      handleToggleModalSide: state.handleToggleModalSide,
-    }))
+  const toggleModal = useToggleStore((state) => state.toggleModal);
+  const handleToggleModal = useToggleStore((state) => state.handleToggleModal);
+  const handleModalType = useToggleStore((state) => state.handleModalType);
+  const handleData = useToggleStore((state) => state.handleData);
+  const purchaseList = usePurchaseStore((state) => state.purchaseList);
+  const handlePurchaseList = usePurchaseStore(
+    (state) => state.handlePurchaseList
   );
+  const saleList = useSaleStore((state) => state.saleList);
+  const handleSaleList = useSaleStore((state) => state.handleSaleList);
 
   const [loading, setLoading] = useState({});
 
   useEffect(() => {
-    // if (productList === null) {
-    //   getProductList({ setLoading, token, handleProductList });
-    // }
-
     socket.emit("fetchProducts"); // Solicitar productos al conectar
     socket.on("initialProducts", (initialProducts) => {
-      console.log({ initialProducts });
       handleProductList(initialProducts);
     });
 
@@ -62,44 +52,42 @@ const Inventory = () => {
     };
   }, []);
 
-  const reload = () => {
-    // getOrders(
-    //   setLoading,
-    //   setErrorAxios,
-    //   handleOrdersList,
-    //   handleOrdersByStatus,
-    //   filters,
-    //   page
-    // );
-  };
+  useEffect(() => {
+    if (purchaseList === null) {
+      getPurchaseList({ setLoading, token, handlePurchaseList });
+    }
+    if (saleList === null) {
+      getSaleList({ setLoading, token, handleSaleList });
+    }
+  }, []);
 
   const columnHelper = createColumnHelper();
 
   const columns = [
-    {
-      id: "select",
-      header: ({ table }) => (
-        <IndeterminateCheckbox
-          {...{
-            checked: table.getIsAllRowsSelected(),
-            indeterminate: table.getIsSomeRowsSelected(),
-            onChange: table.getToggleAllRowsSelectedHandler(),
-          }}
-        />
-      ),
-      cell: ({ row }) => (
-        <div className="px-1">
-          <IndeterminateCheckbox
-            {...{
-              checked: row.getIsSelected(),
-              disabled: !row.getCanSelect(),
-              indeterminate: row.getIsSomeSelected(),
-              onChange: row.getToggleSelectedHandler(),
-            }}
-          />
-        </div>
-      ),
-    },
+    // {
+    //   id: "select",
+    //   header: ({ table }) => (
+    //     <IndeterminateCheckbox
+    //       {...{
+    //         checked: table.getIsAllRowsSelected(),
+    //         indeterminate: table.getIsSomeRowsSelected(),
+    //         onChange: table.getToggleAllRowsSelectedHandler(),
+    //       }}
+    //     />
+    //   ),
+    //   cell: ({ row }) => (
+    //     <div className="px-1">
+    //       <IndeterminateCheckbox
+    //         {...{
+    //           checked: row.getIsSelected(),
+    //           disabled: !row.getCanSelect(),
+    //           indeterminate: row.getIsSomeSelected(),
+    //           onChange: row.getToggleSelectedHandler(),
+    //         }}
+    //       />
+    //     </div>
+    //   ),
+    // },
     columnHelper.accessor("name", {
       header: "Producto",
     }),
@@ -123,10 +111,9 @@ const Inventory = () => {
         <div className="flex gap-2 justify-center">
           <button
             onClick={() => {
-              handleOrderDetails(row.original);
-              navigate(`/inicio/orden`);
-              handleLinkId("order-details");
-              handleSubLinkId("");
+              handleToggleModal(!toggleModal);
+              handleModalType("inventory-details");
+              handleData(row.original);
             }}
             className="font-bold text-slate-800 hover:text-teal-600 dark:text-slate-200 dark:hover:text-teal-400 hover:transition-colors"
           >
@@ -144,11 +131,9 @@ const Inventory = () => {
           data={productList || []}
           columns={columns}
           text={""}
-          reload={reload}
-          create={handleToggleModalSide}
-          boolean={toggleModalSide.status}
-          selectTypeModal={"right"}
-          sideType={"filters"}
+          reload={null}
+          create={handleToggleModal}
+          boolean={toggleModal}
           filter={false}
         />
       </Suspense>

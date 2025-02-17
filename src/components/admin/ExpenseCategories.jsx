@@ -1,13 +1,16 @@
-import React from "react";
-import VerticalTabs from "../tabs/VerticalTabs";
-import { expenseCategories } from "../../data/expenseCategories";
-import Purchase from "@/icons/Purchase";
-import { useAuthStore } from "../../store/auth.store";
+import { expenseCategories } from "@/data/expenseCategories";
+
+import { useAuthStore } from "@/store/auth.store";
 import { useExpenseCategoryStore } from "@/store/expenseCategory.store";
+
 import {
   createExpenseCategory,
   updateExpenseCategory,
-} from "../../utils/expenseCategoryMethods";
+} from "@/utils/expenseCategoryMethods";
+
+import VerticalTabs from "@/components/tabs/VerticalTabs";
+
+import Purchase from "@/icons/Purchase";
 
 const ExpenseCategories = () => {
   const token = useAuthStore((state) => state.token);

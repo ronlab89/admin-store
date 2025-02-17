@@ -22,8 +22,8 @@ export const formValidate = () => {
       message: "Solo números",
     },
     minLength: {
-      value: 8,
-      message: "Mínimo 8 caracteres",
+      value: 6,
+      message: "Mínimo 6 caracteres",
     },
     validateTrim: {
       trim: (v) => {
